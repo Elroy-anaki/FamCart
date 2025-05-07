@@ -21,5 +21,5 @@ createRoot(document.getElementById("root")).render(
   </QueryClientProvider>
 );
 
-axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL_DEV;
+axios.defaults.baseURL = "http://localhost:3000/";
 axios.defaults.withCredentials = true;

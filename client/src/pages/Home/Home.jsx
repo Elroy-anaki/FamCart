@@ -15,7 +15,7 @@ function Home() {
           <h3 className="text-white text-lg sm:text-xl px-4 text-center">Create a new household</h3>
         </div>
         
-        <div className="bg-blue-600 w-full sm:w-1/2 py-8 md:py-0 md:h-1/3 flex justify-center items-center rounded-b-xl sm:rounded-b-none sm:rounded-r-xl cursor-pointer hover:bg-blue-400 transition-colors duration-300">
+        <div className="bg-blue-700 w-full sm:w-1/2 py-8 md:py-0 md:h-1/3 flex justify-center items-center rounded-b-xl sm:rounded-b-none sm:rounded-r-xl cursor-pointer hover:bg-blue-400 transition-colors duration-300">
           <h3 className="text-white text-lg sm:text-xl px-4 text-center">Joining to existing household</h3>
         </div>
       </div>
