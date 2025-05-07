@@ -15,7 +15,6 @@ createRoot(document.getElementById("root")).render(
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
     <ToastContainer />
-
       <App />
     </AuthProvider>
   </QueryClientProvider>

@@ -1,4 +1,4 @@
-import {createNewHousehold, joinToHousehold} from "../services/household.service.js"
+import {createNewHousehold, joinToHousehold, getHouseholdInfoByUserId} from "../services/household.service.js"
 
 export const createHousehold = async (req, res, next) => {
     try {
@@ -12,10 +12,19 @@ export const createHousehold = async (req, res, next) => {
 
 export const joinHousehold = async (req, res, next) => {
     try {
-        const {userId, householdId, joinCode} = req.body;
-        const result = await joinToHousehold(userId, householdId, joinCode);
+        const {userId,joinCode} = req.body;
+        const result = await joinToHousehold(userId, joinCode);
 
         res.status(201).json({ok: true, msg:"joined", data: result})
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const getHouseholdInfo = async (req, res, next) => {
+    try {
+        const household = await getHouseholdInfoByUserId(req.params.userId)
+        res.status(201).json({ok: true, data: household})
     } catch (error) {
         next(error)
     }

@@ -28,7 +28,7 @@ const NavBar = lazy(() => import("./components/NavBar/NavBar"));
 const CreateNewHousehold = lazy(() =>
   import("./pages/CreateNewHousehold/CreateNewHousehold")
 );
-
+const ShoppingList = lazy(() => import("./components/ShoppingCart/ShoppingCart"))
 function Root() {
   return (
     <div className="flex flex-col h-screen">
@@ -48,7 +48,7 @@ function AppRoutes() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<Root />} errorElement={<ErrorPage />}>
-        <Route index element={<Home />} />
+        <Route index element={<div>Home Page</div> } />
         <Route path="home" element={<Home />} />
 
         {/* Public Routes */}
@@ -73,6 +73,7 @@ function AppRoutes() {
           element={isAuth ? <Outlet /> : <Navigate to="/" />}
         >
           <Route path="create-new" element={<CreateNewHousehold />} />
+          <Route path="cart/:cartId" element={<ShoppingList />} />
         </Route>
       </Route>
     )

@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 import { hash } from "bcrypt";
 
 const userSchema = new Schema({
@@ -21,6 +21,11 @@ const userSchema = new Schema({
         type: Boolean,
         default: false
     },
+    householdId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Households",
+        default: null
+    }
 }, { timestamps: true });
 
 

@@ -6,19 +6,26 @@ const shoppingCartSchema = new Schema({
         required: true
     },
     cartItems: {
-        type: [String],
+        type: [{name: String, quantity: Number, completed: Boolean}],
         required: true,
         default: []
     },
     cartTotalPrice: {
         type: Number,
-        required: true
+        required: true,
+        default: 0
     },
+
     cartOwner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Users",
         required: true
     },
+    householdId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Households",
+        default: null
+    }
 }, { timestamps: true });
 
 const ShoppingCart = mongoose.model("ShoppingCarts", shoppingCartSchema);
