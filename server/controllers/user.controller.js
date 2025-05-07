@@ -1,7 +1,7 @@
 import User from "../models/user.model.js";
 import { compare, hash } from "bcrypt";
-import { jwtCookieOptions, generateToken } from "../service/auth.service.js";
-import { sendEmailVerification } from "../service/mail.service.js";
+import { jwtCookieOptions, generateToken } from "../utils/auth.utils.js";
+import { sendEmailVerification } from "../utils/mail.utils.js";
 
 
 export const getAllUsers = async (req, res) => {

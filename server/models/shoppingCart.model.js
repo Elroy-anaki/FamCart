@@ -1,15 +1,15 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
 const shoppingCartSchema = new Schema({ 
     cartName: {
         type: String,
         required: true
     },
-    cartItems: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Products",
-        required: true
-    }],
+    cartItems: {
+        type: [String],
+        required: true,
+        default: []
+    },
     cartTotalPrice: {
         type: Number,
         required: true

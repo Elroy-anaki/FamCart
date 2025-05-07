@@ -1,4 +1,4 @@
-import {Schema} from 'mongoose';
+import mongoose, {Schema, model} from 'mongoose';
 import { nanoid } from 'nanoid'
 
 const householdSchema = new Schema({
@@ -7,7 +7,7 @@ const householdSchema = new Schema({
         required: true
     },
 
-    householdMembers: [{type: monggose.Schema.Types.ObjectId,
+    householdMembers: [{type: mongoose.Schema.Types.ObjectId,
         ref: "Users",
         required: true
     }],
@@ -32,7 +32,7 @@ const householdSchema = new Schema({
             return nanoid(5);
         }
     },
-    
+
     householdOwner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Users",
@@ -41,6 +41,7 @@ const householdSchema = new Schema({
 
 }, {timestamps: true});
 
+/** @type {import('mongoose').Model<import('mongoose').Document>} */
 const Household = model("Households", householdSchema);
 
 export default Household;
