@@ -21,5 +21,5 @@ createRoot(document.getElementById("root")).render(
   </QueryClientProvider>
 );
 
-axios.defaults.baseURL = "http://localhost:3000/";
+axios.defaults.baseURL = "http://localhost:3000";
 axios.defaults.withCredentials = true;

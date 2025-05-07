@@ -32,6 +32,13 @@ const householdSchema = new Schema({
             return nanoid(5);
         }
     },
+    
+    householdShoppingDays: {
+        type: [String],
+        required: true,
+        default: []
+
+    },
 
     householdOwner: {
         type: mongoose.Schema.Types.ObjectId,

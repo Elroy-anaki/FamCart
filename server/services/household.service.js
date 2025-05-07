@@ -7,13 +7,14 @@ export const createNewHousehold = async (newHouseholdInput) => {
         const newHousehold = await Household.create({
             householdName: newHouseholdInput.householdName,
             householdBudget: newHouseholdInput.householdBudget,
-            householdOwner: newHouseholdInput.householdOwner
+            householdOwner: newHouseholdInput.householdOwner,
+            householdShoppingDays: newHouseholdInput.householdShoppingDays,
+            householdMembers: [newHouseholdInput.householdOwner]
         })
         return newHousehold
     } catch (error) {
         throw error
     }
-
 }
 
 export const joinToHousehold = async (userId, householdId, joinCode) => {
