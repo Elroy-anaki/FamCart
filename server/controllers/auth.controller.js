@@ -6,7 +6,7 @@ import {
   verifyEmailByType,
   changePassword,
 } from "../utils/auth.utils.js";
-import { sendEmailForGotPassword } from "../service/mail.service.js";
+import {sendEmailForGotPassword} from "../utils/mail.utils.js"
 
 export const emailVerification = async (req, res) => {
   console.log(req.query);

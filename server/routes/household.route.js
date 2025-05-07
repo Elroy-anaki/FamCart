@@ -1,0 +1,15 @@
+import {Router} from 'express';
+import {createHousehold, joinHousehold, getHouseholdInfo} from "../controllers/household.controller.js"
+
+const router = Router();
+
+// Create household
+router.post('/', createHousehold)
+
+// Join household
+router.post('/join', joinHousehold)
+
+// Get household by id (if there is no return null)
+router.get("/:userId", getHouseholdInfo)
+
+export default router

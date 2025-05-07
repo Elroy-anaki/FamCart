@@ -1,9 +1,10 @@
-import { createContext, useEffect } from "react";
+import { createContext } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
 import { notifyError, notifySuccess } from "../lib/Toasts";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import HouseholdProvider from "./HouseholdContext";
 
 export const AuthContext = createContext();
 
@@ -112,7 +113,9 @@ function AuthProvider({ children }) {
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID}>
       <AuthContext.Provider value={authGlobalState}>
+        <HouseholdProvider>
         {children}
+        </HouseholdProvider>
       </AuthContext.Provider>
     </GoogleOAuthProvider>
   );

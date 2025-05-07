@@ -1,4 +1,4 @@
-import { lazy, useContext } from "react";
+import { lazy, Suspense, useContext } from "react";
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 import { AuthContext } from "./context/AuthContext";
 
+// Lazy imports
 const ErrorPage = lazy(() => import("./pages/ErrorPage/ErrorPage"));
 const Home = lazy(() => import("./pages/Home/Home"));
 const SignIn = lazy(() => import("./forms/Auth/SignIn/SignIn"));
@@ -24,35 +25,36 @@ const EmailVerification = lazy(() =>
 );
 const NavBar = lazy(() => import("./components/NavBar/NavBar"));
 
+const CreateNewHousehold = lazy(() =>
+  import("./pages/CreateNewHousehold/CreateNewHousehold")
+);
+const ShoppingList = lazy(() => import("./components/ShoppingCart/ShoppingCart"))
 function Root() {
   return (
-    <>
-      <div className="flex flex-col">
-        <header className="h-[10vh]">
-          <NavBar />
-        </header>
-        <main className="h-[90vh]">
-          <Outlet />
-        </main>
-
-        {/* Modals */}
-      </div>
-    </>
+    <div className="flex flex-col h-screen">
+      <header className="h-[10vh]">
+        <NavBar />
+      </header>
+      <main className="flex-1 overflow-y-auto">
+        <Outlet />
+      </main>
+    </div>
   );
 }
 
-function App() {
+function AppRoutes() {
   const { isAuth } = useContext(AuthContext);
+
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<Root />} errorElement={<ErrorPage />}>
-        <Route index element={<Home />} />
+        <Route index element={<div>Home Page</div> } />
         <Route path="home" element={<Home />} />
 
         {/* Public Routes */}
         <Route
           path="/auth"
-          element={!isAuth ? <Outlet /> : <Navigate to={"/"} />}
+          element={!isAuth ? <Outlet /> : <Navigate to="/" replace />}
         >
           <Route index element={<SignIn />} />
           <Route path="sign-in" element={<SignIn />} />
@@ -64,20 +66,35 @@ function App() {
             element={<EmailVerification />}
           />
         </Route>
+
+        {/* Private Routes */}
+        <Route
+          path="/household"
+          element={isAuth ? <Outlet /> : <Navigate to="/" />}
+        >
+          <Route path="create-new" element={<CreateNewHousehold />} />
+          <Route path="cart/:cartId" element={<ShoppingList />} />
+        </Route>
       </Route>
     )
   );
 
   return (
-    <div>
-      <RouterProvider
-        router={router}
-        future={{
-          v7_startTransition: true,
-          v7_relativeSplatPath: true,
-        }}
-      />
-    </div>
+    <RouterProvider
+      router={router}
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+    />
+  );
+}
+
+function App() {
+  return (
+    <Suspense fallback={<div className="text-center p-4">Loading...</div>}>
+      <AppRoutes />
+    </Suspense>
   );
 }
 

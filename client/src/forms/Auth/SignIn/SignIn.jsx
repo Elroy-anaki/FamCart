@@ -26,7 +26,7 @@ function SignIn() {
             await signIn(values);
             actions.resetForm();
             notifySuccess('Welcome!');
-            navigate('/');
+            navigate('/home');
           } catch (error) {
             console.log(error);
             notifyError(error.response.data.msg);

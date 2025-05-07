@@ -34,9 +34,13 @@ app.use(cookieParser());
 // Routes (imports + use)
 import authRoutes from "./routes/auth.route.js";
 import usersRoutes from "./routes/user.route.js";
+import householdRoutes from  "./routes/household.route.js"
+import shoppingCartRoutes from "./routes/shoppingCart.route.js"
 
 app.use("/auth", authRoutes);
 app.use("/users", usersRoutes);
+app.use("/households", householdRoutes)
+app.use("/shoppingCart", shoppingCartRoutes)
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}...`);
