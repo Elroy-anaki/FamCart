@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import {createHousehold, joinHousehold, getHouseholdInfo} from "../controllers/household.controller.js"
+import {createHousehold, joinHousehold, getHouseholdInfo, deleteMember} from "../controllers/household.controller.js"
 
 const router = Router();
 
@@ -11,5 +11,8 @@ router.post('/join', joinHousehold)
 
 // Get household by id (if there is no return null)
 router.get("/:userId", getHouseholdInfo)
+
+
+router.delete("/delete/:householdId/:memberId", deleteMember)
 
 export default router

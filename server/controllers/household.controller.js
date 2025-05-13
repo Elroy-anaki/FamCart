@@ -1,4 +1,4 @@
-import {createNewHousehold, joinToHousehold, getHouseholdInfoByUserId} from "../services/household.service.js"
+import {createNewHousehold, joinToHousehold, getHouseholdInfoByUserId, deleteMemberById} from "../services/household.service.js"
 
 export const createHousehold = async (req, res, next) => {
     try {
@@ -23,9 +23,20 @@ export const joinHousehold = async (req, res, next) => {
 
 export const getHouseholdInfo = async (req, res, next) => {
     try {
+        console.log("userId", req.params.userId)
         const household = await getHouseholdInfoByUserId(req.params.userId)
         res.status(201).json({ok: true, data: household})
     } catch (error) {
+        next(error)
+    }
+}
+export const deleteMember = async (req, res, next) => {
+    try {
+        
+        await deleteMemberById(req.params.householdId, req.params.memberId)
+        res.status(203).json({ok: true})
+    } catch (error) {
+        console.log(error)
         next(error)
     }
 }

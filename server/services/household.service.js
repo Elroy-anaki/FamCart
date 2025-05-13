@@ -59,13 +59,31 @@ export const joinToHousehold = async (userId, joinCode) => {
 export const getHouseholdInfoByUserId = async(userId) => {
     try {
         const user = await User.findById(userId)
-        console.log("user -----", user)
         if(!user.householdId) {
             console.log("noooooooo")
             return null
         } 
         const householdByUserId = await Household.findById(user.householdId)
+    .populate("householdMembers")
+    .populate("householdShoppingCarts")
+    .populate("householdOwner");
         return householdByUserId
+    } catch (error) {
+        throw error
+    }
+}
+
+export const deleteMemberById = async (housholdId, memberId) => {
+    try {
+        console.log(housholdId)
+        const household = await Household.findById(housholdId)
+        const updatedMembers = household.householdMembers.filter(
+            (member) => member.toString() !== memberId.toString()
+        );
+                household.householdMembers = updatedMembers
+        await household.save()
+        await User.findByIdAndUpdate(memberId, {householdId: null})
+
     } catch (error) {
         throw error
     }

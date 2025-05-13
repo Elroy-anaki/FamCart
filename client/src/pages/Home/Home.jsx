@@ -8,6 +8,7 @@ import HouseholdInfoPage from "./HouseholdInfoPage";
 import { HouseholdContext } from "../../context/HouseholdContext";
 
 function Home() {
+  
   const {user} = useContext(AuthContext)
   const {householdInfo} = useContext(HouseholdContext)
 
