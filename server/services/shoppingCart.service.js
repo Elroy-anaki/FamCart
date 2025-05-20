@@ -1,4 +1,5 @@
 import ShoppingCart from "../models/shoppingCart.model.js"
+import Household from "../models/household.model.js"
 
 
 export const createNewShoppingCart = async(shoppingCartInput) => {
@@ -38,3 +39,24 @@ export const getCart = async (cartId) => {
         throw error
     }
 }
+export const deleteCartFromHousehold = async (householdId, cartId) => {
+    try {
+      const cart = await ShoppingCart.findById(cartId);
+      if (!cart) throw new Error("Cart not found");
+  
+      await cart.deleteOne();
+  
+      const household = await Household.findById(householdId);
+      if (!household) throw new Error("Household not found");
+  
+      household.householdShoppingCarts = household.householdShoppingCarts.filter(
+        (id) => id.toString() !== cartId.toString()
+      );
+  
+      await household.save();
+  
+    } catch (error) {
+      throw error;
+    }
+  };
+  

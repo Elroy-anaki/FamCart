@@ -39,7 +39,7 @@ function HouseholdProvider({ children }) {
         return null;
       }
     },
-    enabled: false, 
+    enabled: !!user, 
   });
 
   useEffect(() => {

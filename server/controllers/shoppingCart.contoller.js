@@ -1,5 +1,5 @@
 
-import {createNewShoppingCart, getShoppingCartsByHouseholdId, updateCartItems, getCart} from "../services/shoppingCart.service.js"
+import {createNewShoppingCart, getShoppingCartsByHouseholdId, updateCartItems, getCart, deleteCartFromHousehold} from "../services/shoppingCart.service.js"
 
 export const createShoppingCart = async (req, res, next ) => {
     try {
@@ -22,9 +22,10 @@ export const getAllShoppingCartsByHouseholdId = async(req, res, next) => {
 }
 
 export const updateItems = async(req, res, next) => {
-    try {console.log(req.body)
+    try {
+        console.log(req.body)
         console.log(req.params.cartId, req.body.items)
-        const updatedCart = await updateCartItems(req.params.cartId, req.body.items)
+        const updatedCart = await updateCartItems(req.params.cartId, req.body.cartItems)
         res.status(203).json({ok: true, data: updatedCart})
     } catch (error) {
         next(error)
@@ -33,6 +34,16 @@ export const updateItems = async(req, res, next) => {
 export const getCartById = async(req, res, next) => {
     try {
         const cart = await getCart(req.params.cartId)
+        res.status(203).json({ok: true, data: cart})
+    } catch (error) {
+        next(error)
+    }
+}
+export const deleteCart = async(req, res, next) => {
+    try {
+        console.log(req.params.cartId)
+        console.log(req.params.householdId)
+        const cart = await deleteCartFromHousehold(req.params.householdId, req.params.cartId)
         res.status(203).json({ok: true, data: cart})
     } catch (error) {
         next(error)

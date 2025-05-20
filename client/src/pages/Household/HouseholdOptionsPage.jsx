@@ -4,14 +4,16 @@ import JoinHousehold from "../../modals/JoinHousehold";
 import axios from "axios"
 import {AuthContext} from "../../context/AuthContext"
 import { notifyError, notifySuccess } from "../../lib/Toasts";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function HouseholdOptionsPage() {
 
-
+  const queryClient = useQueryClient()
     const {user, isAuth} = useContext(AuthContext)
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [code, setCode] = useState("");
+
   const handleJoin = async() => {
     try {
       if(!isAuth){
@@ -20,14 +22,13 @@ export default function HouseholdOptionsPage() {
         return
       }
       const req = {userId: user?._id, joinCode: code}
-      console.log(req)
       const {data} = await axios.post("/households/join", req)
       notifySuccess(`Welcome to the ${data.data.householdName}`)
+      queryClient.invalidateQueries({queryKey: ["getHouseholdInfo"]})
       setCode("")
     } catch (error) {
       notifyError("failed join code")
     }
-    console.log("Joining with code:", code);
     setIsOpen(false);
   };
     return (

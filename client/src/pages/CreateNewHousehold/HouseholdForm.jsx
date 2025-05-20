@@ -12,7 +12,7 @@ const HouseholdForm = ({ onSubmit }) => {
     <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-xl">
       <h2 className="text-4xl font-bold text-center mb-6 text-green-700">Create a Household</h2>
       <Formik
-        initialValues={{ householdName: '', householdBudget: '', shoppingDays: [] }}
+        initialValues={{ householdName: '', householdBudget: '', householdShoppingDays: [] }}
         validationSchema={createHouseholdSchema}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
           await onSubmit(values);
@@ -52,7 +52,7 @@ const HouseholdForm = ({ onSubmit }) => {
                   <label key={day} className="flex items-center space-x-2">
                     <Field
                       type="checkbox"
-                      name="shoppingDays"
+                      name="householdShoppingDays"
                       value={day}
                       className="h-4 w-4 text-blue-600"
                     />
@@ -60,7 +60,7 @@ const HouseholdForm = ({ onSubmit }) => {
                   </label>
                 ))}
               </div>
-              <ErrorMessage name="shoppingDays" component="div" className="text-red-500 text-sm mt-1" />
+              <ErrorMessage name="householdShoppingDays" component="div" className="text-red-500 text-sm mt-1" />
             </div>
 
             {/* Submit */}

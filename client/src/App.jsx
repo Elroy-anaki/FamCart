@@ -28,7 +28,8 @@ const NavBar = lazy(() => import("./components/NavBar/NavBar"));
 const CreateNewHousehold = lazy(() =>
   import("./pages/CreateNewHousehold/CreateNewHousehold")
 );
-const ShoppingList = lazy(() => import("./components/ShoppingCart/ShoppingCart"))
+const ShoppingCartPage = lazy(() => import("./components/ShoppingCart/ShoppingCartPage"))
+
 function Root() {
   return (
     <div className="flex flex-col h-screen">
@@ -49,7 +50,7 @@ function AppRoutes() {
     createRoutesFromElements(
       <Route path="/" element={<Root />} errorElement={<ErrorPage />}>
         <Route index element={<div>Home Page</div> } />
-        <Route path="home" element={<Home />} />
+        <Route path="household" element={<Home />} />
 
         {/* Public Routes */}
         <Route
@@ -73,8 +74,8 @@ function AppRoutes() {
           element={isAuth ? <Outlet /> : <Navigate to="/" />}
         >
           <Route path="create-new" element={<CreateNewHousehold />} />
-          <Route path="cart/:cartId" element={<ShoppingList />} />
-        </Route>
+          <Route path="shopping-cart/:cartId" element={<ShoppingCartPage />} />
+          </Route>
       </Route>
     )
   );

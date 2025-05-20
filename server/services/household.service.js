@@ -4,6 +4,7 @@ import User from "../models/user.model.js"
 
 export const createNewHousehold = async (newHouseholdInput) => {
     try {
+        console.log("owner", newHouseholdInput)
         const newHousehold = await Household.create({
             householdName: newHouseholdInput.householdName,
             householdBudget: newHouseholdInput.householdBudget,
@@ -11,10 +12,7 @@ export const createNewHousehold = async (newHouseholdInput) => {
             householdShoppingDays: newHouseholdInput.householdShoppingDays,
             householdMembers: [newHouseholdInput.householdOwner]
         })
-        console.log("owner", newHouseholdInput.householdOwner)
         let user = await User.findById(newHouseholdInput.householdOwner);
-        console.log(user)
-        console.log("newHousehold._id", newHousehold._id)
         user.householdId = newHousehold._id
         await user.save()
         return newHousehold
@@ -59,13 +57,82 @@ export const joinToHousehold = async (userId, joinCode) => {
 export const getHouseholdInfoByUserId = async(userId) => {
     try {
         const user = await User.findById(userId)
-        console.log("user -----", user)
         if(!user.householdId) {
             console.log("noooooooo")
             return null
         } 
         const householdByUserId = await Household.findById(user.householdId)
+    .populate("householdMembers")
+    .populate("householdShoppingCarts")
+    .populate("householdOwner");
         return householdByUserId
+    } catch (error) {
+        throw error
+    }
+}
+
+export const deleteMemberById = async (housholdId, memberId) => {
+    try {
+        console.log(housholdId)
+        const household = await Household.findById(housholdId)
+        const updatedMembers = household.householdMembers.filter(
+            (member) => member.toString() !== memberId.toString()
+        );
+                household.householdMembers = updatedMembers
+        await household.save()
+        await User.findByIdAndUpdate(memberId, {householdId: null})
+
+    } catch (error) {
+        throw error
+    }
+}
+export const leaveHouseholdByMemberId = async (housholdId, memberId) => {
+    try {
+        
+        const household = await Household.findById(housholdId)
+        const updatedMembers = household.householdMembers.filter(
+            (member) => member.toString() !== memberId.toString()
+        );
+                household.householdMembers = updatedMembers
+        await household.save()
+        await User.findByIdAndUpdate(memberId, {householdId: null})
+
+    } catch (error) {
+        throw error
+    }
+}
+export const householdDispersionByhouseholdId = async (housholdId) => {
+    try {
+        
+        const household = await Household.findById(housholdId)
+        const members = household.householdMembers
+        for(const member of members) {
+            await User.findByIdAndUpdate(member, {householdId: null})
+        }
+        // in the future do this operation also on carts
+        await household.deleteOne()
+
+    } catch (error) {
+        throw error
+    }
+}
+export const updateShoppingDays = async (housholdId, updatedDays) => {
+    try {        
+        const household = await Household.findById(housholdId)
+        household.householdShoppingDays = updatedDays;
+        await household.save()
+
+    } catch (error) {
+        throw error
+    }
+}
+export const updateHouseholdBudget = async (housholdId, newBudget) => {
+    try {
+        
+        const household = await Household.findById(housholdId, newBudget)
+        household.householdBudget = newBudget;
+        await household.save()
+
     } catch (error) {
         throw error
     }

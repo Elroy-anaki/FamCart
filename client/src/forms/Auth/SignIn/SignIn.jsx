@@ -13,8 +13,16 @@ const initialUserValues = {
 };
 
 function SignIn() {
-  const { signIn, signInWithGoogle } = useContext(AuthContext);
+
+  const { isAuth, signIn, signInWithGoogle } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if(!isAuth) {
+      return
+    }
+    navigate("/household")
+  },[isAuth])
 
   return (
     <div className="flex items-center justify-center py-20 md:py-16 px-4 md:px-0">
@@ -26,7 +34,7 @@ function SignIn() {
             await signIn(values);
             actions.resetForm();
             notifySuccess('Welcome!');
-            navigate('/home');
+            navigate('/household');
           } catch (error) {
             console.log(error);
             notifyError(error.response.data.msg);
