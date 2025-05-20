@@ -4,11 +4,13 @@ import { HouseholdContext } from "../../context/HouseholdContext";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { notifyError, notifySuccess } from "../../lib/Toasts";
+import { useNavigate } from "react-router-dom";
 
 export function ShoppingCartsInfo () {
-
-    const { user } = useContext(AuthContext);
-    const { householdInfo } = useContext(HouseholdContext);
+  
+  const { user } = useContext(AuthContext);
+  const { householdInfo } = useContext(HouseholdContext);
+  const navigate = useNavigate()
   
     const [cartName, setCartName] = useState("");
     const [shoppingCarts, setShoppingCarts] = useState([]);
@@ -137,7 +139,7 @@ export function ShoppingCartsInfo () {
               shoppingCarts.map((cart) => (
                 <div
                   key={cart._id}
-                  onClick={() => setShoppingCart(cart)}
+                  onClick={() => navigate(`/household/shopping-cart/${cart._id}`)}
                   className={`cart-card cursor-pointer bg-white border rounded-xl p-4 transition duration-200 shadow-sm hover:shadow-md ${
                     shoppingCart?._id === cart._id
                       ? "border-green-500 ring-2 ring-green-200"

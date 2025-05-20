@@ -24,12 +24,18 @@ function NavBar() {
           >
             <img src="/FamCart.png" alt="Logo" className="w-10 md:w-14 rounded-2xl" />
           </Link>
+          <Link
+            to="/"
+            className="transition-transform hover:scale-105 flex items-center gap-2 md:gap-4"
+          >
+            <p className='text-white text-2xl'>{user?.userName}</p>
+          </Link>
         </div>
 
         {/* Center Navigation Links - Desktop */}
         <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2">
           <ul className="flex gap-4 lg:gap-8">
-            {['Home', 'About', 'Menu', 'Order Place', 'Contact Us'].map((item, index) => (
+            {['Household', 'Shopping Carts', 'Recipes', 'Contact Us'].map((item, index) => (
               <li key={index}>
                 <Link
                   to={`/${item.toLowerCase().replace(' ', '-')}`}

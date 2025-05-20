@@ -1,10 +1,9 @@
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import {AuthContext} from "../../context/AuthContext"
 
-import HouseholdOptionsPage from "./HouseholdOptionsPage";
-import HouseholdInfoPage from "./HouseholdInfoPage";
+import HouseholdOptionsPage from "../Household/HouseholdOptionsPage";
+import HouseholdInfoPage from "../Household/HouseholdInfoPage";
 import { HouseholdContext } from "../../context/HouseholdContext";
 
 function Home() {
