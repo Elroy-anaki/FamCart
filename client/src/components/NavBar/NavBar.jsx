@@ -8,15 +8,25 @@ function NavBar() {
   const { isAuth, signOut, user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState({ carts: false, recipes: false });
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const toggleDropdown = (menu) => {
+    setIsDropdownOpen((prev) => ({ ...prev, [menu]: !prev[menu] }));
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+    setIsDropdownOpen({ carts: false, recipes: false });
+  };
+
   return (
     <nav className="w-full bg-gradient-to-r from-green-900 via-green-700 to-green-800 relative z-40">
       <div className="max-w-screen-2xl w-11/12 mx-auto flex justify-between items-center py-3 relative">
-        {/* Logo and Restaurant Info */}
+        {/* Logo and User Info */}
         <div className="flex items-center gap-2 md:gap-6">
           <Link
             to="/"
@@ -28,27 +38,98 @@ function NavBar() {
             to="/"
             className="transition-transform hover:scale-105 flex items-center gap-2 md:gap-4"
           >
-            <p className='text-white text-2xl'>{user?.userName}</p>
+            <p className="text-white text-2xl">{user?.userName}</p>
           </Link>
         </div>
 
         {/* Center Navigation Links - Desktop */}
         <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2">
           <ul className="flex gap-4 lg:gap-8">
-            {['Household', 'Shopping Carts', 'Recipes', 'Contact Us'].map((item, index) => (
-              <li key={index}>
-                <Link
-                  to={`/${item.toLowerCase().replace(' ', '-')}`}
-                  className="block text-sm lg:text-lg py-1 md:py-2 px-2 md:px-4 text-white hover:text-black 
-                             font-medium tracking-wide 
-                             transition-all duration-300 
-                             hover:bg-white
-                             rounded-lg"
-                >
-                  {item}
-                </Link>
-              </li>
-            ))}
+            <li>
+              <Link
+                to="/household"
+                className="block text-sm lg:text-lg py-1 md:py-2 px-2 md:px-4 text-white hover:text-black 
+                           font-medium tracking-wide 
+                           transition-all duration-300 
+                           hover:bg-white
+                           rounded-lg"
+              >
+                Household
+              </Link>
+            </li>
+
+            {/* Shopping Carts Dropdown */}
+            <li className="relative">
+              <button
+                onClick={() => toggleDropdown('carts')}
+                className="block text-sm lg:text-lg py-1 md:py-2 px-2 md:px-4 text-white hover:text-black 
+                           font-medium tracking-wide 
+                           transition-all duration-300 
+                           hover:bg-white
+                           rounded-lg"
+              >
+                Shopping Carts
+              </button>
+              {isDropdownOpen.carts && (
+                <ul className="absolute left-0 mt-2 bg-white shadow-lg rounded-lg w-40">
+                  <li>
+                    <Link
+                      to="/household/carts"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      All Carts
+                    </Link>
+                  </li>
+                </ul>
+              )}
+            </li>
+
+            {/* Recipes Dropdown */}
+            <li className="relative">
+              <button
+                onClick={() => toggleDropdown('recipes')}
+                className="block text-sm lg:text-lg py-1 md:py-2 px-2 md:px-4 text-white hover:text-black 
+                           font-medium tracking-wide 
+                           transition-all duration-300 
+                           hover:bg-white
+                           rounded-lg"
+              >
+                Recipes
+              </button>
+              {isDropdownOpen.recipes && (
+                <ul className="absolute left-0 mt-2 bg-white shadow-lg rounded-lg w-40">
+                  <li>
+                    <Link
+                      to="/household/recipes/create-new"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Create
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/household/recipes"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      All Recipes
+                    </Link>
+                  </li>
+                </ul>
+              )}
+            </li>
+
+            <li>
+              <Link
+                to="/contact-us"
+                className="block text-sm lg:text-lg py-1 md:py-2 px-2 md:px-4 text-white hover:text-black 
+                           font-medium tracking-wide 
+                           transition-all duration-300 
+                           hover:bg-white
+                           rounded-lg"
+              >
+                Contact Us
+              </Link>
+            </li>
           </ul>
         </div>
 
@@ -137,54 +218,87 @@ function NavBar() {
       {isMenuOpen && (
         <div className="md:hidden bg-gradient-to-r from-green-900 via-green-700 to-green-800 w-full py-2 absolute left-0 z-50">
           <ul className="flex flex-col items-center gap-2">
-            {['Home', 'About', 'Menu', 'Order Place', 'Contact Us'].map((item, index) => (
-              <li key={index} className="w-full">
-                <Link
-                  to={`/${item.toLowerCase().replace(' ', '-')}`}
-                  className="block text-base py-2 px-4 text-white hover:text-black 
-                             font-medium tracking-wide text-center
-                             transition-all duration-300 
-                             hover:bg-white"
-                  onClick={toggleMenu}
-                >
-                  {item}
-                </Link>
-              </li>
-            ))}
-            {/* Mobile Authentication */}
-            <li className="w-full py-2">
-              <div className="flex justify-center">
-                {isAuth ? (
-                  <button
-                    onClick={() => {
-                      signOut();
-                      navigate('/');
-                      toggleMenu();
-                    }}
-                    className="bg-rose-600 text-white flex gap-2 justify-center items-center font-semibold px-4 py-2 rounded-lg"
-                  >
-                    Sign Out
-                    <PiSignOut size={20} />
-                  </button>
-                ) : (
-                  <div className="flex gap-4">
+            <li>
+              <Link
+                to="/household"
+                className="block text-base py-2 px-4 text-white hover:text-black 
+                           font-medium tracking-wide text-center
+                           transition-all duration-300 
+                           hover:bg-white"
+                onClick={closeMenu}
+              >
+                Household
+              </Link>
+            </li>
+            <li>
+              <button
+                onClick={() => toggleDropdown('carts')}
+                className="block text-base py-2 px-4 text-white hover:text-black 
+                           font-medium tracking-wide text-center
+                           transition-all duration-300 
+                           hover:bg-white"
+              >
+                Shopping Carts
+              </button>
+              {isDropdownOpen.carts && (
+                <ul className="bg-white shadow-lg rounded-lg w-40">
+  
+                  <li>
                     <Link
-                      to="/auth/sign-up"
-                      className="px-4 py-2 border-2 border-white text-white rounded-lg hover:bg-white hover:text-black font-semibold transition-colors"
-                      onClick={toggleMenu}
+                      to="/household/carts"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={closeMenu}
                     >
-                      Sign Up
+                      All Carts
                     </Link>
+                  </li>
+                </ul>
+              )}
+            </li>
+            <li>
+              <button
+                onClick={() => toggleDropdown('recipes')}
+                className="block text-base py-2 px-4 text-white hover:text-black 
+                           font-medium tracking-wide text-center
+                           transition-all duration-300 
+                           hover:bg-white"
+              >
+                Recipes
+              </button>
+              {isDropdownOpen.recipes && (
+                <ul className="bg-white shadow-lg rounded-lg w-40">
+                  <li>
                     <Link
-                      to="/auth/sign-in"
-                      className="px-4 py-2 border-2 border-white text-white rounded-lg hover:bg-white hover:text-black font-semibold transition-colors"
-                      onClick={toggleMenu}
+                      to="/household/recipes/create-new"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={closeMenu}
                     >
-                      Sign In
+                      Create
                     </Link>
-                  </div>
-                )}
-              </div>
+                  </li>
+                  <li>
+                    <Link
+                      to="/household/recipes"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={closeMenu}
+                    >
+                      All Recipes
+                    </Link>
+                  </li>
+                </ul>
+              )}
+            </li>
+            <li>
+              <Link
+                to="/contact-us"
+                className="block text-base py-2 px-4 text-white hover:text-black 
+                           font-medium tracking-wide text-center
+                           transition-all duration-300 
+                           hover:bg-white"
+                onClick={closeMenu}
+              >
+                Contact Us
+              </Link>
             </li>
           </ul>
         </div>

@@ -4,7 +4,6 @@ import User from "../models/user.model.js"
 
 export const createNewHousehold = async (newHouseholdInput) => {
     try {
-        console.log("owner", newHouseholdInput)
         const newHousehold = await Household.create({
             householdName: newHouseholdInput.householdName,
             householdBudget: newHouseholdInput.householdBudget,
@@ -48,7 +47,6 @@ export const joinToHousehold = async (userId, joinCode) => {
         await user.save()
        return household
     } catch (error) {
-        console.error('Error joining household:', error);
         throw error;
     }
 };
@@ -58,7 +56,6 @@ export const getHouseholdInfoByUserId = async(userId) => {
     try {
         const user = await User.findById(userId)
         if(!user.householdId) {
-            console.log("noooooooo")
             return null
         } 
         const householdByUserId = await Household.findById(user.householdId)
@@ -73,7 +70,6 @@ export const getHouseholdInfoByUserId = async(userId) => {
 
 export const deleteMemberById = async (housholdId, memberId) => {
     try {
-        console.log(housholdId)
         const household = await Household.findById(housholdId)
         const updatedMembers = household.householdMembers.filter(
             (member) => member.toString() !== memberId.toString()

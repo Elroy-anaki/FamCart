@@ -24,4 +24,5 @@ router.delete("/dispersion/:householdId", householdDispersion)
 router.put("/updateDays/:householdId", updateDays)
 
 router.put("/updateBudget/:householdId", updateBudget)
+
 export default router

@@ -74,9 +74,9 @@ export function ShoppingCartsInfo () {
   
     return (
       <>
+   
+
       
-        
-        
         {/* Cart Management Bar */}
         <div className="mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-xl shadow-md">
           <div className="flex items-center gap-2 w-full">
@@ -201,6 +201,7 @@ export function ShoppingCartsInfo () {
             </div>
           )} */}
         </div>
+        
         </>
     );
   }

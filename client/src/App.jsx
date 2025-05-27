@@ -30,6 +30,13 @@ const CreateNewHousehold = lazy(() =>
 );
 const ShoppingCartPage = lazy(() => import("./components/ShoppingCart/ShoppingCartPage"))
 
+const CreateRecipe = lazy(() => import("./forms/recipes/CreateRecipe"))
+
+const Recipes = lazy(() => import("./components/Recipes/Recipes"))
+
+const AllCarts = lazy(() => import("./components/ShoppingCart/AllCartsPage"))
+
+
 function Root() {
   return (
     <div className="flex flex-col h-screen">
@@ -74,7 +81,10 @@ function AppRoutes() {
           element={isAuth ? <Outlet /> : <Navigate to="/" />}
         >
           <Route path="create-new" element={<CreateNewHousehold />} />
+          <Route path="carts" element={<AllCarts />} />
           <Route path="shopping-cart/:cartId" element={<ShoppingCartPage />} />
+          <Route path="recipes" element={<Recipes />} />
+          <Route path="recipes/create-new" element={<CreateRecipe />} />
           </Route>
       </Route>
     )
