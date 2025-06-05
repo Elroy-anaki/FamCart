@@ -120,14 +120,14 @@ function NavBar() {
 
             <li>
               <Link
-                to="/contact-us"
+                to="/profile"
                 className="block text-sm lg:text-lg py-1 md:py-2 px-2 md:px-4 text-white hover:text-black 
                            font-medium tracking-wide 
                            transition-all duration-300 
                            hover:bg-white
                            rounded-lg"
               >
-                Contact Us
+                Profile
               </Link>
             </li>
           </ul>
@@ -150,7 +150,7 @@ function NavBar() {
               <button
                 onClick={() => {
                   signOut();
-                  navigate('/');
+                  navigate('/auth/sign-in');
                 }}
                 className="hover:text-white flex gap-2 justify-center items-center font-semibold"
               >
@@ -290,14 +290,14 @@ function NavBar() {
             </li>
             <li>
               <Link
-                to="/contact-us"
+                to="/profile"
                 className="block text-base py-2 px-4 text-white hover:text-black 
                            font-medium tracking-wide text-center
                            transition-all duration-300 
                            hover:bg-white"
                 onClick={closeMenu}
               >
-                Contact Us
+                Profile
               </Link>
             </li>
           </ul>

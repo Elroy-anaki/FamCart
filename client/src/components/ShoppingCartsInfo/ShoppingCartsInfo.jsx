@@ -5,6 +5,10 @@ import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { notifyError, notifySuccess } from "../../lib/Toasts";
 import { useNavigate } from "react-router-dom";
+import { io } from "socket.io-client";
+
+// הגדרת הסוקט (רק פעם אחת)
+const socket = io("http://localhost:3000", { autoConnect: false });
 
 export function ShoppingCartsInfo () {
   
@@ -31,6 +35,37 @@ export function ShoppingCartsInfo () {
         }
       }
     });
+
+    // התחברות לחדר של המשק הבית
+    useEffect(() => {
+      if (householdInfo?._id) {
+        socket.connect(); // מתחבר רק כשצריך
+        socket.emit("joinHousehold", householdInfo._id);
+      }
+
+      return () => {
+        socket.disconnect(); // מנקה את החיבור כשעוזבים את הקומפוננטה
+      };
+    }, [householdInfo]);
+
+    // האזנה לעדכונים על עגלות קניות
+    useEffect(() => {
+      const handleCartNotification = (data) => {
+        if (data.type === "created") {
+          notifySuccess(data.message);
+          refetch(); // מעדכן את רשימת העגלות
+        } else if (data.type === "deleted") {
+          notifySuccess(data.message);
+          refetch(); // מעדכן את רשימת העגלות
+        }
+      };
+
+      socket.on("cartNotification", handleCartNotification);
+
+      return () => {
+        socket.off("cartNotification", handleCartNotification);
+      };
+    }, [refetch]);
   
     const addCart = async () => {
       try {
@@ -44,6 +79,14 @@ export function ShoppingCartsInfo () {
         setCartName(""); // Clear input after creating cart
         setIsInputVisible(false); // Hide input after creating cart
         refetch();
+        
+        // שליחת הודעה לכל חברי משק הבית על עגלה חדשה
+        socket.emit("cartCreated", {
+          householdId: householdInfo._id,
+          cartId: data.data._id,
+          cartName: cartName,
+          createdBy: user?.name || "Unknown"
+        });
       } catch (error) {
         notifyError("Creating cart");
       }
@@ -205,7 +248,3 @@ export function ShoppingCartsInfo () {
         </>
     );
   }
-  
-  
-
-

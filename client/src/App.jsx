@@ -36,6 +36,8 @@ const Recipes = lazy(() => import("./components/Recipes/Recipes"))
 
 const AllCarts = lazy(() => import("./components/ShoppingCart/AllCartsPage"))
 
+const ProfilePage = lazy(() => import("./pages/Profile/ProfilePage"))
+
 
 function Root() {
   return (
@@ -76,6 +78,7 @@ function AppRoutes() {
         </Route>
 
         {/* Private Routes */}
+        <Route path="/profile" element={isAuth ? <ProfilePage /> : <Navigate  to="/" replace/>}/>
         <Route
           path="/household"
           element={isAuth ? <Outlet /> : <Navigate to="/" />}

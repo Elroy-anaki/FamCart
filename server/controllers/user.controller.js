@@ -97,12 +97,9 @@ export const signIn = async (req, res) => {
 };
 
 export const editUserDetails = async (req, res) => {
-  console.log(req.body.userPassword);
 
-  !req.body.userPassword
-    ? delete req.body.userPassword
-    : (req.body.userPassword = await hash(req.body.userPassword, 10));
-  console.log(req.body);
+  console.log("req.body", req.body);
+  console.log("req.params", req.params);
 
   try {
     const editedUser = await User.findByIdAndUpdate(
@@ -111,9 +108,9 @@ export const editUserDetails = async (req, res) => {
       { new: true }
     );
 
-    res.status(200).json({
+    res.status(201).json({
       success: true,
-      msg: "Your Changes Saved!",
+      msg: "Your Changes Saveddd!",
       data: editedUser,
     });
   } catch (error) {

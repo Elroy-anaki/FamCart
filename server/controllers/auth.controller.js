@@ -5,8 +5,12 @@ import { nanoid } from "nanoid";
 import {
   verifyEmailByType,
   changePassword,
+  generateToken,
+  jwtCookieOptions
 } from "../utils/auth.utils.js";
 import {sendEmailForGotPassword} from "../utils/mail.utils.js"
+
+
 
 export const emailVerification = async (req, res) => {
   console.log(req.query);
@@ -94,6 +98,39 @@ export const verifyToken = async (req, res) => {
       success: false,
       msg: "Auth NOT success",
       error: error.msg || error,
+    });
+  }
+};
+
+export const refreshToken = async (req, res) => {
+  const { userId } = req.body;
+  try {
+    // Find the user
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ success: false, msg: "User not found" });
+    }
+
+    // Generate a new token using the utility function
+    const data = generateToken(user);
+    const token = data.token;
+    const payload = data.payload;
+
+    // Set the token in cookies
+    res.cookie("token", token, jwtCookieOptions);
+
+    res.status(200).json({
+      success: true,
+      msg: "Token refreshed successfully",
+      data: payload,
+    });
+  } catch (error) {
+    console.error("Error refreshing token:", error);
+    res.status(500).json({
+      success: false,
+      msg: "Failed to refresh token",
+      error: error.message || error,
     });
   }
 };

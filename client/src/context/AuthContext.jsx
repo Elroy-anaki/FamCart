@@ -100,6 +100,7 @@ function AuthProvider({ children }) {
 
   const authGlobalState = {
     user,
+    setUser,
     isAuth,
     setIsAuth,
     signUp,
