@@ -7,42 +7,40 @@ import { notifyError, notifySuccess } from "../../lib/Toasts";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
-
-
 export default function HouseholdInfoPage() {
   const { householdInfo } = useContext(HouseholdContext);
-  const [isEditingBudget, setIsEditingBudget] = useState(false);
-  const [newBudget, setNewBudget] = useState(householdInfo?.householdBudget);
+  const [isEditing, setIsEditing] = useState({ field: null, value: "" });
   const [showSave, setShowSave] = useState(false);
   const queryClient = useQueryClient();
 
-
-  const handleBudgetClick = () => {
-    setIsEditingBudget(true);
+  const handleEditClick = (field, value) => {
+    setIsEditing({ field, value });
   };
 
-  const handleBudgetChange = (e) => {
-    setNewBudget(e.target.value);
+  const handleChange = (e) => {
+    setIsEditing((prev) => ({ ...prev, value: e.target.value }));
     setShowSave(true);
   };
 
-  const {mutate: updateBudget} = useMutation({
-    mutationKey: ["updateBudget"],
-    mutationFn: async () => ((await axios.put(`/households/updateBudget/${householdInfo._id}`, {budget: newBudget})).data),
+  const { mutate: updateHousehold } = useMutation({
+    mutationKey: ["updateHousehold"],
+    mutationFn: async () =>
+      (
+        await axios.put(`/households/update/${householdInfo._id}`, {
+          [isEditing.field]: isEditing.value,
+        })
+      ).data,
     onSuccess: () => {
-        notifySuccess("Update Budget succesfully")
-        queryClient.invalidateQueries({queryKey:['getHouseholdInfo']})
-        setShowSave(false)
-        setIsEditingBudget(false)
+      notifySuccess("Update successful!");
+      queryClient.invalidateQueries({ queryKey: ["getHouseholdInfo"] });
+      setShowSave(false);
+      setIsEditing({ field: null, value: "" });
     },
-    onError:(error) => {
-      console.log(error)
-        notifyError("Update Budget failed")
-    }
-
-})
-
-  
+    onError: (error) => {
+      console.log(error);
+      notifyError("Update failed!");
+    },
+  });
 
   return (
     <div className="p-4 md:p-6 max-w-4xl mx-auto space-y-4">
@@ -59,17 +57,17 @@ export default function HouseholdInfoPage() {
         {/* Budget Section */}
         <div className="flex gap-3 items-center rounded-2xl text-white p-4 bg-green-600 w-full md:w-1/2">
           <h3 className="text-xl">Budget</h3>
-          {isEditingBudget ? (
+          {isEditing.field === "householdBudget" ? (
             <>
               <input
                 type="number"
-                value={newBudget}
-                onChange={handleBudgetChange}
+                value={isEditing.value}
+                onChange={handleChange}
                 className="text-blue-800 rounded px-2 py-1 w-24 bg-white"
               />
               {showSave && (
                 <button
-                  onClick={updateBudget}
+                  onClick={updateHousehold}
                   className="bg-white text-green-600 font-semibold px-3 py-1 rounded hover:bg-green-100"
                 >
                   Save
@@ -79,7 +77,9 @@ export default function HouseholdInfoPage() {
           ) : (
             <p
               className="text-lg text-blue-800 cursor-pointer hover:underline"
-              onClick={handleBudgetClick}
+              onClick={() =>
+                handleEditClick("householdBudget", householdInfo?.householdBudget)
+              }
             >
               {householdInfo?.householdBudget}
             </p>
@@ -87,11 +87,35 @@ export default function HouseholdInfoPage() {
         </div>
 
         {/* Join Code Section */}
-        <div className="flex justify-between items-center gap-3 rounded-2xl text-white p-4 bg-green-600 w-full md:w-1/2">
+        <div className="flex gap-3 items-center rounded-2xl text-white p-4 bg-green-600 w-full md:w-1/2">
           <h3 className="text-xl">Join Code</h3>
-          <p className="text-lg text-blue-800">
-            {householdInfo?.householdJoinCode}
-          </p>
+          {isEditing.field === "householdJoinCode" ? (
+            <>
+              <input
+                type="text"
+                value={isEditing.value}
+                onChange={handleChange}
+                className="text-blue-800 rounded px-2 py-1 w-24 bg-white"
+              />
+              {showSave && (
+                <button
+                  onClick={updateHousehold}
+                  className="bg-white text-green-600 font-semibold px-3 py-1 rounded hover:bg-green-100"
+                >
+                  Save
+                </button>
+              )}
+            </>
+          ) : (
+            <p
+              className="text-lg text-blue-800 cursor-pointer hover:underline"
+              onClick={() =>
+                handleEditClick("householdJoinCode", householdInfo?.householdJoinCode)
+              }
+            >
+              {householdInfo?.householdJoinCode}
+            </p>
+          )}
         </div>
       </div>
 

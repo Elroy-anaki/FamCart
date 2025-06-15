@@ -32,4 +32,4 @@ const CreateRecipe = () => {
   return <CreateRecipeForm onSubmit={handleSubmit} />;
 };
 
-export default CreateRecipe;
+export default CreateRecipe;  

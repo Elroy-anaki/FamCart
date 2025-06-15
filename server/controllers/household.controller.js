@@ -74,7 +74,7 @@ export const updateDays = async (req, res, next) => {
 export const updateBudget = async (req, res, next) => {
     try {
         
-        await updateHouseholdBudget(req.params.householdId, req.body.budget)
+        await updateHouseholdBudget(req.params.householdId, req.body)
         res.status(203).json({ok: true})
     } catch (error) {
         console.log(error)

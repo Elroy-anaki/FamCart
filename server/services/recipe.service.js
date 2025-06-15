@@ -24,3 +24,28 @@ export const getRecipes = async (filter) => {
         throw error
     }
 }
+export const findRecipeById = async (recipeId) => {
+    try {
+        const recipe = Recipe.findById(recipeId).populate("createdBy")
+        return recipe || null
+    } catch (error) {
+        throw error
+    }
+}
+export const updateRecipe = async (recipeId, dataToUpdate) => {
+    try {
+        const recipe = await Recipe.findByIdAndUpdate(recipeId, dataToUpdate)
+        console.log(recipe)
+        return recipe || null
+    } catch (error) {
+        throw error
+    }
+}
+export const deleteRecpie = async (recipeId) => {
+    try {
+        console.log(recipeId)
+        await Recipe.findByIdAndDelete(recipeId)
+    } catch (error) {
+        throw error
+    }
+}

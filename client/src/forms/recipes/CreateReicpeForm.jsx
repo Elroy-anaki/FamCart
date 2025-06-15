@@ -14,6 +14,7 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
     recipeName: '',
     ingredients: [{ name: '', quantity: '', unit: '' }],
     preparationSteps: '',
+    preparationTime: '', 
     image: null,
   });
   const [isSubmitting, setSubmitting] = useState(false);
@@ -23,31 +24,29 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
   };
 
   const handleSubmit = async (e) => {
-    
-    let invalidRequest = "myRecipes"
+    let invalidRequest = "myRecipes";
     e.preventDefault();
     setSubmitting(true);
-
-    console.log("Image File:", values.image); // Debugging: Log the image file
-
+  
     const formData = new FormData();
     formData.append('recipeName', values.recipeName);
     formData.append('createdBy', user?._id);
     if (linkHouseholdRef.current) {
       formData.append('linkedHousehold', householdInfo?._id);
-      invalidRequest = "householdRecipes"
+      invalidRequest = "householdRecipes";
     }
     formData.append('preparationSteps', values.preparationSteps);
+    formData.append('preparationTime', values.preparationTime); 
     if (values.image) {
-      formData.append('image', values.image); // Append the image file
+      formData.append('image', values.image); 
     }
-
+  
     values.ingredients.forEach((ingredient, index) => {
       formData.append(`ingredients[${index}][name]`, ingredient.name);
       formData.append(`ingredients[${index}][quantity]`, ingredient.quantity);
       formData.append(`ingredients[${index}][unit]`, ingredient.unit || '');
     });
-
+  
     try {
       await onSubmit(formData);
       // Reset form
@@ -55,6 +54,7 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
         recipeName: '',
         ingredients: [{ name: '', quantity: '', unit: '' }],
         preparationSteps: '',
+        preparationTime: '', // איפוס זמן הכנה
         image: null,
       });
       queryClient.invalidateQueries({ queryKey: [invalidRequest] });
@@ -64,7 +64,6 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
       setSubmitting(false);
     }
   };
-
   return (
     <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-xl">
       <h2 className="text-4xl font-bold text-center mb-6 text-green-700">Create a Recipe</h2>
@@ -176,6 +175,20 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
             onChange={(e) => setFieldValue('preparationSteps', e.target.value)}
             className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
+          />
+        </div>
+        {/* Preparation Time */}
+        <div>
+          <label htmlFor="preparationTime" className="block font-medium mb-1">
+            Preparation Time (minutes)
+          </label>
+          <input
+            type="number"
+            name="preparationTime"
+            value={values.preparationTime || ""}
+            onChange={(e) => setFieldValue("preparationTime", e.target.value)}
+            className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required  
           />
         </div>
 

@@ -124,11 +124,9 @@ export const updateShoppingDays = async (housholdId, updatedDays) => {
 }
 export const updateHouseholdBudget = async (housholdId, newBudget) => {
     try {
-        
-        const household = await Household.findById(housholdId, newBudget)
-        household.householdBudget = newBudget;
-        await household.save()
-
+        console.log("newBudget", newBudget)
+        const household = await Household.findByIdAndUpdate(housholdId, newBudget)
+        console.log(household)
     } catch (error) {
         throw error
     }

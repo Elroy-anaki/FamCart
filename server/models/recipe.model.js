@@ -20,11 +20,14 @@ const recipeSchema = new Schema({
     type: String,
     required: true 
   },
+  preparationTime: {
+    type: Number,
+    required: true
+  },
   image: {
     type: String,
     required: false 
   },
-
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Users",

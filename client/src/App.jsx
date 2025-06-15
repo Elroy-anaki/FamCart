@@ -32,6 +32,8 @@ const ShoppingCartPage = lazy(() => import("./components/ShoppingCart/ShoppingCa
 
 const CreateRecipe = lazy(() => import("./forms/recipes/CreateRecipe"))
 
+const RecipePage = lazy(() => (import("./components/Recipes/RecipePage")))
+
 const Recipes = lazy(() => import("./components/Recipes/Recipes"))
 
 const AllCarts = lazy(() => import("./components/ShoppingCart/AllCartsPage"))
@@ -88,6 +90,7 @@ function AppRoutes() {
           <Route path="shopping-cart/:cartId" element={<ShoppingCartPage />} />
           <Route path="recipes" element={<Recipes />} />
           <Route path="recipes/create-new" element={<CreateRecipe />} />
+          <Route path="recipes/:id" element={<RecipePage />} />
           </Route>
       </Route>
     )
