@@ -20,10 +20,34 @@ export default function ShoppingCartPage() {
       const res = await axios.get(`/shoppingCart/${cartId}`);
       return res.data.data;
     },
-    retry: false, // לא לנסות שוב אם יש שגיאה
+    retry: false,
   });
 
-  // אם יש שגיאה (עגלה לא נמצאת), נווט לדף העגלות
+  useEffect(() => {
+    socket.connect();
+
+    socket.on("connect", () => {
+      console.log("Socket connected:", socket.id);
+      socket.emit("joinHousehold", householdInfo._id);
+    });
+
+    socket.on("cartNotification", (data) => {
+      notifySuccess(data.message);
+      refetch()
+    });
+
+    socket.on("cartDeleted", () => {
+      navigate("/household/carts-active");
+
+    });
+
+    return () => {
+      socket.disconnect();
+      socket.off("cartNotification");
+      socket.off("cartDeleted");
+    };
+  }, [householdInfo._id, refetch]);
+
   useEffect(() => {
     if (error) {
       notifyError("Cart not found");
@@ -31,49 +55,17 @@ export default function ShoppingCartPage() {
     }
   }, [error, navigate]);
 
-  // התחברות לחדר של המשק הבית
-  useEffect(() => {
-    if (householdInfo?._id) {
-      socket.connect(); // מתחבר רק כשצריך
-      socket.emit("joinHousehold", householdInfo._id);
-    }
-
-    return () => {
-      socket.disconnect(); // מנקה את החיבור כשעוזבים את הקומפוננטה
-    };
-  }, [householdInfo]);
-
-  // האזנה לעדכונים בעגלה ומחיקת עגלה
-  useEffect(() => {
-    const handleCartNotification = (data) => {
-      notifySuccess(data.message);
-      refetch();
-    };
-
-    const handleCartDeleted = (data) => {
-      if (data.cartId === cartId) {
-        notifyError("This cart was deleted.");
-        navigate("/household/carts");
-      }
-    };
-
-    socket.on("cartNotification", handleCartNotification);
-    socket.on("cartDeleted", handleCartDeleted);
-
-    return () => {
-      socket.off("cartNotification", handleCartNotification);
-      socket.off("cartDeleted", handleCartDeleted);
-    };
-  }, [refetch, cartId, navigate]);
-
   const [items, setItems] = useState([]);
   const [cartName, setCartName] = useState("");
   const [newItem, setNewItem] = useState({ name: "", quantity: "", unit: "" });
+  const [addTotalPrice, setAddTotalPrice] = useState(false);
+  const [totalPrice, setTotalPrice] = useState(0);
 
   useEffect(() => {
     if (data) {
       setItems(data.cartItems);
       setCartName(data.cartName);
+      setTotalPrice(data.cartTotalPrice);
     }
   }, [data]);
 
@@ -101,9 +93,21 @@ export default function ShoppingCartPage() {
         householdId: householdInfo._id,
         cartId,
       });
-      navigate("/household/carts");
+      navigate("/household/carts-active");
     },
     onError: () => notifyError("Failed to delete cart"),
+  });
+
+  const { mutate: markAsCompleted } = useMutation({
+    mutationKey: ["markAsCompleted"],
+    mutationFn: async () => {
+      await axios.put(`/shoppingCart/${cartId}/completed`, { cartTotalPrice: totalPrice });
+    },
+    onSuccess: () => {
+      notifySuccess("Cart completed");
+      navigate("/household/carts-active");
+    },
+    onError: () => notifyError("Completed cart failed"),
   });
 
   const resetItems = () => {
@@ -133,66 +137,25 @@ export default function ShoppingCartPage() {
       <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
         <h1 className="text-2xl font-bold text-green-600">{cartName}</h1>
 
-        <div className="flex gap-2">
-          <button
-            onClick={() => saveChangesMutation.mutate()}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
-          >
-            Save
-          </button>
-          <button
-            onClick={() => deleteCart.mutate()}
-            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
-          >
-            Delete Cart
-          </button>
-        </div>
-      </div>
-
-      <div className="mb-10 border-t pt-4">
-        <h2 className="font-semibold mb-2">Add Item</h2>
-        <div className="flex flex-wrap gap-2">
-          <input
-            type="text"
-            placeholder="Item name"
-            value={newItem.name}
-            onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
-            className="flex-1 border rounded px-3 py-2"
-          />
-          <input
-            type="number"
-            min={1}
-            placeholder="Qty"
-            value={newItem.quantity}
-            onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
-            className="w-20 border rounded px-3 py-2"
-          />
-          <input
-            type="text"
-            placeholder="Unit"
-            value={newItem.unit}
-            onChange={(e) => setNewItem({ ...newItem, unit: e.target.value })}
-            className="w-24 border rounded px-3 py-2"
-          />
-          <button
-            onClick={handleAddItem}
-            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg"
-          >
-            Add
-          </button>
-        </div>
+        {!data.isCompleted && (
+          <div className="flex gap-2">
+            <button
+              onClick={() => saveChangesMutation.mutate()}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
+            >
+              Save
+            </button>
+            <button
+              onClick={() => deleteCart.mutate()}
+              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
+            >
+              Delete Cart
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <h3 className="text-xl font-bold">Items</h3>
-          <button
-            onClick={resetItems}
-            className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg"
-          >
-            Reset items
-          </button>
-        </div>
         {items.map((item, index) => (
           <div
             key={index}
@@ -203,18 +166,21 @@ export default function ShoppingCartPage() {
               value={item.name}
               onChange={(e) => handleChangeItem(index, "name", e.target.value)}
               className="flex-1 border rounded px-2 py-1"
+              disabled={data.isCompleted}
             />
             <input
               type="number"
               value={item.quantity}
               onChange={(e) => handleChangeItem(index, "quantity", e.target.value)}
               className="w-20 border rounded px-2 py-1"
+              disabled={data.isCompleted}
             />
             <input
               type="text"
               value={item.unit}
               onChange={(e) => handleChangeItem(index, "unit", e.target.value)}
               className="w-24 border rounded px-2 py-1"
+              disabled={data.isCompleted}
             />
             <label className="flex items-center gap-1">
               <input
@@ -223,18 +189,84 @@ export default function ShoppingCartPage() {
                 onChange={(e) =>
                   handleChangeItem(index, "completed", e.target.checked)
                 }
+                disabled={data.isCompleted}
               />
               Completed
             </label>
-            <button
-              onClick={() => handleDeleteItem(index)}
-              className="text-red-500 hover:text-red-700"
-            >
-              ✕
-            </button>
+            {!data.isCompleted && (
+              <button
+                onClick={() => handleDeleteItem(index)}
+                className="text-red-500 hover:text-red-700"
+              >
+                ✕
+              </button>
+            )}
           </div>
         ))}
       </div>
+
+      {!data.isCompleted ? (
+        <div className="mt-6">
+          <div className="flex flex-wrap gap-2 items-center">
+            <input
+              type="text"
+              placeholder="Item name"
+              value={newItem.name}
+              onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+              className="flex-1 border rounded px-2 py-1"
+            />
+            <input
+              type="number"
+              placeholder="Quantity"
+              value={newItem.quantity}
+              onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
+              className="w-20 border rounded px-2 py-1"
+            />
+            <input
+              type="text"
+              placeholder="Unit"
+              value={newItem.unit}
+              onChange={(e) => setNewItem({ ...newItem, unit: e.target.value })}
+              className="w-24 border rounded px-2 py-1"
+            />
+            <button
+              onClick={handleAddItem}
+              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg"
+            >
+              Add Item
+            </button>
+          </div>
+          <button
+            className="bg-green-600 cursor-pointer rounded-lg p-2 text-white mt-4"
+            onClick={() => setAddTotalPrice(!addTotalPrice)}
+          >
+            Mark as completed
+          </button>
+          {addTotalPrice && (
+            <div className="flex justify-start items-center gap-5 mt-3">
+              <input
+                className="rounded-lg border-2 border-black p-2"
+                type="number"
+                name="totalPrice"
+                id="totalPrice"
+                onChange={(e) => setTotalPrice(e.target.value)}
+              />
+              <button
+                className="bg-green-600 cursor-pointer rounded-lg p-2 text-white"
+                onClick={markAsCompleted}
+              >
+                Save Total Price
+              </button>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="mt-6">
+          <h2 className="text-xl font-bold text-green-600">
+            Total Price: ${totalPrice}
+          </h2>
+        </div>
+      )}
     </div>
   );
 }

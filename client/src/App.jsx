@@ -36,7 +36,9 @@ const RecipePage = lazy(() => (import("./components/Recipes/RecipePage")))
 
 const Recipes = lazy(() => import("./components/Recipes/Recipes"))
 
-const AllCarts = lazy(() => import("./components/ShoppingCart/AllCartsPage"))
+const ActiveCarts = lazy(() => import("./components/ShoppingCart/AllCartsPage"))
+
+const CartsHistory = lazy(() => import("./components/ShoppingCart/CartsHistory"))
 
 const ProfilePage = lazy(() => import("./pages/Profile/ProfilePage"))
 
@@ -86,7 +88,8 @@ function AppRoutes() {
           element={isAuth ? <Outlet /> : <Navigate to="/" />}
         >
           <Route path="create-new" element={<CreateNewHousehold />} />
-          <Route path="carts" element={<AllCarts />} />
+          <Route path="carts-active" element={<ActiveCarts />} />
+          <Route path="carts-history" element={<CartsHistory />} />
           <Route path="shopping-cart/:cartId" element={<ShoppingCartPage />} />
           <Route path="recipes" element={<Recipes />} />
           <Route path="recipes/create-new" element={<CreateRecipe />} />

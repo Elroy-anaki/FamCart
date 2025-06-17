@@ -1,7 +1,7 @@
 import { ShoppingCartsInfo } from "../ShoppingCartsInfo/ShoppingCartsInfo";
 
 
-export default function AllCartsPage() {
+export default function ActiveCartsPage() {
     return (
 
         <>

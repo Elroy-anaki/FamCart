@@ -26,7 +26,7 @@ export function ShoppingCartsInfo () {
       queryFn: async () => {
         try {
           if (householdInfo) {
-            const { data } = await axios.get(`/shoppingCart/${householdInfo?._id}/householdId`);
+            const { data } = await axios.get(`/shoppingCart/${householdInfo?._id}/householdId/active`);
             setShoppingCarts(data.data);
             return data;
           }

@@ -3,8 +3,10 @@ import CreateRecipeForm from './CreateReicpeForm'; // Fixed typo in import
 import axios from 'axios';
 import { useMutation } from '@tanstack/react-query';
 import { notifySuccess, notifyError } from '../../lib/Toasts';
+import { useNavigate } from 'react-router-dom';
 
 const CreateRecipe = () => {
+  const navigate = useNavigate()
   const { mutate: addRecipe } = useMutation({
     mutationKey: ['addRecipe'], 
     mutationFn: async (formData) =>
@@ -13,6 +15,7 @@ const CreateRecipe = () => {
       }),
     onSuccess: (data) => {
       notifySuccess('Recipe created successfully!');
+      navigate("/household/recipes")
       console.log('Recipe created:', data);
     },
     onError: (error) => {

@@ -27,6 +27,10 @@ const shoppingCartSchema = new Schema({
     ref: "Users",
     required: true
   },
+  isCompleted : {
+    type: Boolean,
+    default: false
+  },
   householdId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Households",

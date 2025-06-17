@@ -9,7 +9,7 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
   const { user } = useContext(AuthContext);
 
   const queryClient = useQueryClient();
-  const linkHouseholdRef = useRef(false); // Use useRef instead of useState
+  const linkHouseholdRef = useRef(false);  
   const [values, setValues] = useState({
     recipeName: '',
     ingredients: [{ name: '', quantity: '', unit: '' }],
@@ -48,13 +48,13 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
     });
   
     try {
-      await onSubmit(formData);
+      onSubmit(formData);
       // Reset form
       setValues({
         recipeName: '',
         ingredients: [{ name: '', quantity: '', unit: '' }],
         preparationSteps: '',
-        preparationTime: '', // איפוס זמן הכנה
+        preparationTime: '',
         image: null,
       });
       queryClient.invalidateQueries({ queryKey: [invalidRequest] });

@@ -48,11 +48,11 @@ const RecipePage = () => {
     onSuccess: () => {
       setIsEditing(false);
       queryClient.invalidateQueries({ queryKey: ["getRecipe", id] });
-      alert("Recipe updated successfully!");
+      notifySuccess("Recipe updated successfully!");
     },
     onError: (error) => {
       console.error("Error updating recipe:", error);
-      alert("Failed to update recipe. Please try again.");
+      notifyError("Failed to update recipe. Please try again.");
     },
   });
 
@@ -62,7 +62,7 @@ const RecipePage = () => {
       await axios.delete(`/recipes/${id}`);
     },
     onSuccess: () => {
-    notifySuccess("Recipe deleted successfully!");
+      notifySuccess("Recipe deleted successfully!");
       navigate("/household/recipes"); // Redirect to recipes list
     },
     onError: (error) => {
@@ -72,12 +72,12 @@ const RecipePage = () => {
   });
 
   if (isLoading) {
-    return <p className="text-center text-gray-500">Loading recipe...</p>;
+    return <p className="text-center text-gray-500 p-4">Loading recipe...</p>;
   }
 
   if (error) {
     return (
-      <p className="text-center text-red-500">
+      <p className="text-center text-red-500 p-4">
         Failed to load recipe. Please try again later.
       </p>
     );
@@ -97,35 +97,49 @@ const RecipePage = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg mt-10 relative">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-4xl font-bold text-center text-gray-800 flex-1">
-          {editedRecipe.recipeName || "Recipe Name"}
-        </h1>
-        <div className="flex gap-4">
-          <button
-            type="button"
-            onClick={() => setIsEditing(true)}
-            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-            disabled={isEditing || isDeleting}
-          >
-            Edit
-          </button>
-          <button
-            type="button"
-            onClick={() => deleteRecipe()}
-            className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-            disabled={isDeleting}
-          >
-            {isDeleting ? "Deleting..." : "Delete"}
-          </button>
-        </div>
+    <div className="max-w-4xl mx-auto p-4 sm:p-6 bg-white shadow-md rounded-lg mt-4 sm:mt-10 relative">
+      {/* Header with Recipe Name */}
+      <div className="mb-6">
+        {isEditing ? (
+          <input
+            type="text"
+            value={editedRecipe.recipeName || ""}
+            onChange={(e) =>
+              setEditedRecipe((prev) => ({ ...prev, recipeName: e.target.value }))
+            }
+            className="w-full text-2xl sm:text-4xl font-bold text-center text-gray-800 border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter recipe name"
+          />
+        ) : (
+          <h1 className="text-2xl sm:text-4xl font-bold text-center text-gray-800 break-words">
+            {editedRecipe.recipeName || "Recipe Name"}
+          </h1>
+        )}
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex flex-col sm:flex-row justify-center sm:justify-end items-center gap-3 mb-6">
+        <button
+          type="button"
+          onClick={() => setIsEditing(true)}
+          className="w-full sm:w-auto bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
+          disabled={isEditing || isDeleting}
+        >
+          Edit
+        </button>
+        <button
+          type="button"
+          onClick={() => deleteRecipe()}
+          className="w-full sm:w-auto bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors"
+          disabled={isDeleting}
+        >
+          {isDeleting ? "Deleting..." : "Delete"}
+        </button>
       </div>
 
       {/* Recipe Image */}
       <div className="mb-6">
-        <label className="block text-lg font-semibold text-gray-700">Recipe Image</label>
+        <label className="block text-lg font-semibold text-gray-700 mb-2">Recipe Image</label>
         {isEditing ? (
           <input
             type="file"
@@ -134,7 +148,7 @@ const RecipePage = () => {
             accept="image/*"
           />
         ) : (
-          <div className="w-full h-64 bg-gray-200 rounded-md flex items-center justify-center overflow-hidden">
+          <div className="w-full h-48 sm:h-64 md:h-80 bg-gray-200 rounded-md flex items-center justify-center overflow-hidden">
             {editedRecipe.image ? (
               <img
                 src={editedRecipe.image}
@@ -150,97 +164,103 @@ const RecipePage = () => {
 
       {/* Ingredients */}
       <div className="mb-6">
-        <label className="block text-lg font-semibold text-gray-700">Ingredients</label>
-        {editedRecipe.ingredients.map((ingredient, index) => (
-          <div key={index} className="flex gap-4 mb-2 items-center">
-            <input
-              type="text"
-              placeholder="Name"
-              value={ingredient.name || ""}
-              onChange={(e) =>
-                setEditedRecipe((prev) => {
-                  const updatedIngredients = [...prev.ingredients];
-                  updatedIngredients[index].name = e.target.value;
-                  return { ...prev, ingredients: updatedIngredients };
-                })
-              }
-              className="flex-1 border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={!isEditing}
-            />
-            <input
-              type="number"
-              placeholder="Quantity"
-              value={ingredient.quantity || ""}
-              onChange={(e) =>
-                setEditedRecipe((prev) => {
-                  const updatedIngredients = [...prev.ingredients];
-                  updatedIngredients[index].quantity = e.target.value;
-                  return { ...prev, ingredients: updatedIngredients };
-                })
-              }
-              className="w-24 border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={!isEditing}
-            />
-            <input
-              type="text"
-              placeholder="Unit"
-              value={ingredient.unit || ""}
-              onChange={(e) =>
-                setEditedRecipe((prev) => {
-                  const updatedIngredients = [...prev.ingredients];
-                  updatedIngredients[index].unit = e.target.value;
-                  return { ...prev, ingredients: updatedIngredients };
-                })
-              }
-              className="w-24 border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={!isEditing}
-            />
-          </div>
-        ))}
+        <label className="block text-lg font-semibold text-gray-700 mb-2">Ingredients</label>
+        <div className="space-y-3">
+          {editedRecipe.ingredients.map((ingredient, index) => (
+            <div key={index} className="flex flex-col sm:flex-row gap-2 sm:gap-3 p-3 bg-gray-50 rounded-md">
+              <input
+                type="text"
+                placeholder="Name"
+                value={ingredient.name || ""}
+                onChange={(e) =>
+                  setEditedRecipe((prev) => {
+                    const updatedIngredients = [...prev.ingredients];
+                    updatedIngredients[index].name = e.target.value;
+                    return { ...prev, ingredients: updatedIngredients };
+                  })
+                }
+                className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled={!isEditing}
+              />
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  placeholder="Quantity"
+                  value={ingredient.quantity || ""}
+                  onChange={(e) =>
+                    setEditedRecipe((prev) => {
+                      const updatedIngredients = [...prev.ingredients];
+                      updatedIngredients[index].quantity = e.target.value;
+                      return { ...prev, ingredients: updatedIngredients };
+                    })
+                  }
+                  className="w-20 sm:w-24 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={!isEditing}
+                />
+                <input
+                  type="text"
+                  placeholder="Unit"
+                  value={ingredient.unit || ""}
+                  onChange={(e) =>
+                    setEditedRecipe((prev) => {
+                      const updatedIngredients = [...prev.ingredients];
+                      updatedIngredients[index].unit = e.target.value;
+                      return { ...prev, ingredients: updatedIngredients };
+                    })
+                  }
+                  className="w-16 sm:w-20 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={!isEditing}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Preparation Steps */}
       <div className="mb-6">
-        <label className="block text-lg font-semibold text-gray-700">Preparation Steps</label>
+        <label className="block text-lg font-semibold text-gray-700 mb-2">Preparation Steps</label>
         <textarea
           value={editedRecipe.preparationSteps || ""}
           onChange={(e) =>
             setEditedRecipe((prev) => ({ ...prev, preparationSteps: e.target.value }))
           }
-          className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          rows="4"
+          className="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-vertical"
+          rows="6"
           disabled={!isEditing}
+          placeholder="Enter preparation steps..."
         />
       </div>
 
       {/* Preparation Time */}
       <div className="mb-6">
-        <label className="block text-lg font-semibold text-gray-700">Preparation Time (minutes)</label>
+        <label className="block text-lg font-semibold text-gray-700 mb-2">Preparation Time (minutes)</label>
         <input
           type="number"
           value={editedRecipe.preparationTime || ""}
           onChange={(e) =>
             setEditedRecipe((prev) => ({ ...prev, preparationTime: e.target.value }))
           }
-          className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full sm:w-48 border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           disabled={!isEditing}
+          placeholder="Enter time in minutes"
         />
       </div>
 
       {/* Save and Cancel Buttons */}
       {isEditing && (
-        <div className="flex justify-end gap-4">
+        <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t border-gray-200">
           <button
             type="button"
             onClick={handleCancel}
-            className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
+            className="w-full sm:w-auto bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 transition-colors"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={() => saveRecipe(editedRecipe)}
-            className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+            className="w-full sm:w-auto bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600 transition-colors"
             disabled={isSaving}
           >
             {isSaving ? "Saving..." : "Save"}

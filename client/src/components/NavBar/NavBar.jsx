@@ -74,10 +74,18 @@ function NavBar() {
                 <ul className="absolute left-0 mt-2 bg-white shadow-lg rounded-lg w-40">
                   <li>
                     <Link
-                      to="/household/carts"
+                      to="/household/carts-active"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
-                      All Carts
+                      Active Carts
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/household/carts-history"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      History
                     </Link>
                   </li>
                 </ul>
@@ -245,11 +253,20 @@ function NavBar() {
   
                   <li>
                     <Link
-                      to="/household/carts"
+                      to="/household/carts-active"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={closeMenu}
                     >
-                      All Carts
+                      Active Carts
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/household/carts-history"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={closeMenu}
+                    >
+                      History
                     </Link>
                   </li>
                 </ul>
