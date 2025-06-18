@@ -9,11 +9,11 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
   const { user } = useContext(AuthContext);
 
   const queryClient = useQueryClient();
-  const linkHouseholdRef = useRef(false);  
+  const [linkHousehold, setLinkHousehold] = useState(false); // Changed from ref to state
   const [values, setValues] = useState({
     recipeName: '',
     ingredients: [{ name: '', quantity: '', unit: '' }],
-    preparationSteps: '',
+    preparationSteps: [''], // Changed to array of strings
     preparationTime: '', 
     image: null,
   });
@@ -31,12 +31,13 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
     const formData = new FormData();
     formData.append('recipeName', values.recipeName);
     formData.append('createdBy', user?._id);
-    if (linkHouseholdRef.current) {
+    if (linkHousehold) {
       formData.append('linkedHousehold', householdInfo?._id);
       invalidRequest = "householdRecipes";
     }
-    formData.append('preparationSteps', values.preparationSteps);
-    formData.append('preparationTime', values.preparationTime); 
+    
+    // Join preparation steps with newlines or send as array - depends on your backend
+    formData.append('preparationSteps', JSON.stringify(values.preparationSteps));    formData.append('preparationTime', values.preparationTime); 
     if (values.image) {
       formData.append('image', values.image); 
     }
@@ -53,10 +54,11 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
       setValues({
         recipeName: '',
         ingredients: [{ name: '', quantity: '', unit: '' }],
-        preparationSteps: '',
+        preparationSteps: [''],
         preparationTime: '',
         image: null,
       });
+      setLinkHousehold(false);
       queryClient.invalidateQueries({ queryKey: [invalidRequest] });
     } catch (error) {
       console.error('Failed to submit recipe:', error);
@@ -64,6 +66,7 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
       setSubmitting(false);
     }
   };
+
   return (
     <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-xl">
       <h2 className="text-4xl font-bold text-center mb-6 text-green-700">Create a Recipe</h2>
@@ -165,18 +168,52 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
 
         {/* Preparation Steps */}
         <div>
-          <label htmlFor="preparationSteps" className="block font-medium mb-1">
-            Preparation Steps
-          </label>
-          <textarea
-            name="preparationSteps"
-            rows="4"
-            value={values.preparationSteps}
-            onChange={(e) => setFieldValue('preparationSteps', e.target.value)}
-            className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
+          <label className="block font-medium mb-2">Preparation Steps</label>
+          {values.preparationSteps.map((step, index) => (
+            <div key={index} className="mb-3">
+              <div className="flex items-start gap-2">
+                <span className="text-sm text-gray-500 mt-3 min-w-[20px]">{index + 1}.</span>
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    placeholder={`Step ${index + 1}`}
+                    value={step}
+                    onChange={(e) => {
+                      const newSteps = [...values.preparationSteps];
+                      newSteps[index] = e.target.value;
+                      setFieldValue('preparationSteps', newSteps);
+                    }}
+                    className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+                {values.preparationSteps.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newSteps = values.preparationSteps.filter((_, i) => i !== index);
+                      setFieldValue('preparationSteps', newSteps);
+                    }}
+                    className="text-red-500 text-sm hover:text-red-700 transition mt-2"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => {
+              const newSteps = [...values.preparationSteps, ''];
+              setFieldValue('preparationSteps', newSteps);
+            }}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-md transition"
+          >
+            Add Step
+          </button>
         </div>
+
         {/* Preparation Time */}
         <div>
           <label htmlFor="preparationTime" className="block font-medium mb-1">
@@ -203,21 +240,38 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
             accept="image/*"
             onChange={(event) => {
               const file = event.currentTarget.files[0];
-              console.log("Selected File:", file); // Debugging: Log the selected file
+              console.log("Selected File:", file);
               setFieldValue('image', file);
             }}
             className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
-        {/* Link Household */}
-        <div>
+        {/* Link Household - Improved Toggle */}
+        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+          <div>
+            <span className="text-gray-700 font-medium block">Link to Household</span>
+            <span className="text-sm text-gray-500">
+              {linkHousehold ? "Recipe will be shared with household members" : "Recipe will be private"}
+            </span>
+          </div>
           <button
             type="button"
-            className="bg-purple-500 rounded-xl p-3 text-white cursor-pointer"
-            onClick={() => (linkHouseholdRef.current = true)} // Update ref value without re-rendering
+            className={`relative inline-flex items-center h-6 w-11 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 ${
+              linkHousehold ? "bg-purple-600" : "bg-gray-300"
+            }`}
+            onClick={() => {
+              setLinkHousehold(!linkHousehold);
+              console.log("Link Household:", !linkHousehold);
+            }}
+            aria-pressed={linkHousehold}
+            aria-label="Toggle household linking"
           >
-            Link household
+            <span
+              className={`inline-block h-4 w-4 rounded-full bg-white transition-transform duration-200 ${
+                linkHousehold ? "translate-x-6" : "translate-x-1"
+              }`}
+            />
           </button>
         </div>
 
@@ -236,4 +290,4 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
   );
 };
 
-export default CreateRecipeForm;
+export default CreateRecipeForm

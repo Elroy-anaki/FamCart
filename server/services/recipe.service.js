@@ -4,13 +4,13 @@ import cloudinary from '../config/cloudinary.config.js';
 
 export const createNewRecipe = async (imageFile, recipeDetails) => {
     try {
-        console.log("imageFile", imageFile)
         if (imageFile) {
-            console.log("There is a file")
             const { secure_url } = await cloudinary.uploader.upload(imageFile.path);
             recipeDetails.image = secure_url;
           }
-          console.log("recipeDetails", recipeDetails)
+          recipeDetails.preparationSteps = JSON.parse(recipeDetails.preparationSteps)
+          console.log("recipeDetailsrecipeDetailsrecipeDetails", recipeDetails);
+          
           await Recipe.create(recipeDetails)
     } catch (error) {
         throw error

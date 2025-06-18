@@ -1,5 +1,8 @@
 import Household from "../models/household.model.js"
 import User from "../models/user.model.js"
+import { nanoid } from 'nanoid'
+import  ShoppingCart from "../models/shoppingCart.model.js"
+
 
 
 export const createNewHousehold = async (newHouseholdInput) => {
@@ -106,6 +109,10 @@ export const householdDispersionByhouseholdId = async (housholdId) => {
             await User.findByIdAndUpdate(member, {householdId: null})
         }
         // in the future do this operation also on carts
+        const carts = await ShoppingCart.find({householdId:housholdId})
+        for(const cart of carts){
+            await cart.deleteOne()
+        }
         await household.deleteOne()
 
     } catch (error) {
@@ -126,6 +133,15 @@ export const updateHouseholdBudget = async (housholdId, newBudget) => {
     try {
         console.log("newBudget", newBudget)
         const household = await Household.findByIdAndUpdate(housholdId, newBudget)
+        console.log(household)
+    } catch (error) {
+        throw error
+    }
+}
+export const changeHouseholdJoinCode = async (housholdId) => {
+    try {
+        
+        const household = await Household.findByIdAndUpdate(housholdId, {householdJoinCode: nanoid(5)})
         console.log(household)
     } catch (error) {
         throw error

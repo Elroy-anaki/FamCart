@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { MdOutlineTableBar } from "react-icons/md";
 import { PiSignOut } from "react-icons/pi";
 import { AuthContext } from '../../context/AuthContext';
 
@@ -32,7 +31,7 @@ function NavBar() {
             to="/"
             className="transition-transform hover:scale-105 flex items-center gap-2 md:gap-4"
           >
-            <img src="/FamCart.png" alt="Logo" className="w-10 md:w-14 rounded-2xl" />
+            {/* <img src="/Logo.png" alt="Logo" className="w-10 md:w-14 rounded-2xl" /> */}
           </Link>
           <Link
             to="/"

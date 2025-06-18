@@ -78,6 +78,7 @@ export default function ProfilePage() {
               id="userEmail"
               name="userEmail"
               value={formData.userEmail}
+              disabled
               onChange={handleChange}
               className="mt-2 block w-full border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500 text-lg p-3"
             />

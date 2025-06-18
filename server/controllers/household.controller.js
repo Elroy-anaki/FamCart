@@ -1,4 +1,4 @@
-import {createNewHousehold, joinToHousehold, getHouseholdInfoByUserId, deleteMemberById, leaveHouseholdByMemberId, householdDispersionByhouseholdId, updateShoppingDays, updateHouseholdBudget} from "../services/household.service.js"
+import {createNewHousehold, joinToHousehold, getHouseholdInfoByUserId, deleteMemberById, leaveHouseholdByMemberId, householdDispersionByhouseholdId, updateShoppingDays, updateHouseholdBudget, changeHouseholdJoinCode} from "../services/household.service.js"
 
 export const createHousehold = async (req, res, next) => {
     try {
@@ -75,6 +75,16 @@ export const updateBudget = async (req, res, next) => {
     try {
         
         await updateHouseholdBudget(req.params.householdId, req.body)
+        res.status(203).json({ok: true})
+    } catch (error) {
+        console.log(error)
+        next(error)
+    }
+}
+export const changeJoinCode = async (req, res, next) => {
+    try {
+        
+        await changeHouseholdJoinCode(req.params.householdId)
         res.status(203).json({ok: true})
     } catch (error) {
         console.log(error)

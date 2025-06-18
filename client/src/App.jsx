@@ -44,10 +44,12 @@ const ProfilePage = lazy(() => import("./pages/Profile/ProfilePage"))
 
 
 function Root() {
+  const { isAuth } = useContext(AuthContext);
   return (
     <div className="flex flex-col h-screen">
       <header className="h-[10vh]">
-        <NavBar />
+        {isAuth ?<NavBar /> : <SignIn/> }
+        
       </header>
       <main className="flex-1 overflow-y-auto">
         <Outlet />
@@ -62,8 +64,7 @@ function AppRoutes() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<Root />} errorElement={<ErrorPage />}>
-        <Route index element={<div>Home Page</div> } />
-        <Route path="household" element={<Home />} />
+        <Route path="household" element={isAuth ? <Home /> : null} />
 
         {/* Public Routes */}
         <Route

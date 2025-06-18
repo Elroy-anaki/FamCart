@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import {createHousehold, joinHousehold, getHouseholdInfo, deleteMember, leaveHousehold, householdDispersion, updateDays, updateBudget} from "../controllers/household.controller.js"
+import {createHousehold, joinHousehold, getHouseholdInfo, deleteMember, leaveHousehold, householdDispersion, updateDays, updateBudget, changeJoinCode} from "../controllers/household.controller.js"
 
 const router = Router();
 
@@ -24,5 +24,9 @@ router.delete("/dispersion/:householdId", householdDispersion)
 router.put("/updateDays/:householdId", updateDays)
 
 router.put("/update/:householdId", updateBudget)
+
+router.put("/change-join-code/:householdId", changeJoinCode)
+
+
 
 export default router

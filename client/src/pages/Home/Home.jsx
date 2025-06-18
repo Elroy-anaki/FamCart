@@ -11,8 +11,6 @@ function Home() {
   const {user} = useContext(AuthContext)
   const {householdInfo} = useContext(HouseholdContext)
 
-  
-  
   if (!householdInfo && user){
     return (
       <>

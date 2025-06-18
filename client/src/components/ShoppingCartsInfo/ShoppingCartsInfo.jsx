@@ -124,13 +124,14 @@ export function ShoppingCartsInfo () {
         <div className="mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-xl shadow-md">
           <div className="flex items-center gap-2 w-full">
             {isInputVisible ? (
-              <div className="flex items-center w-full max-w-md animate-fadeIn">
+              <div className="flex flex-wrap gap-10 items-center w-full max-w-md animate-fadeIn">
                 <input
                   type="text"
                   placeholder="Enter cart name..."
                   value={cartName}
                   onChange={(e) => setCartName(e.target.value)}
                   onKeyPress={handleKeyPress}
+                  maxLength={15}
                   autoFocus
                   className="bg-green-50 border border-green-300 rounded-lg px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500 w-full transition"
                 />

@@ -17,7 +17,7 @@ const recipeSchema = new Schema({
     default: []
   },
   preparationSteps: {
-    type: String,
+    type: [String],
     required: true 
   },
   preparationTime: {
