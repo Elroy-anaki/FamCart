@@ -1,5 +1,5 @@
 
-import {createNewShoppingCart, getShoppingCartsByHouseholdId, updateCartItems, getCart, deleteCartFromHousehold, markAsCompleted,getCartsHistoryByHouseholdId, reopenCart} from "../services/shoppingCart.service.js"
+import {createNewShoppingCart, getShoppingCartsByHouseholdId, updateCartItems, getCart, deleteCartFromHousehold, markAsCompleted,getCartsHistoryByHouseholdId, reopenCart, recipeToCart} from "../services/shoppingCart.service.js"
 
 export const createShoppingCart = async (req, res, next ) => {
     try {
@@ -76,6 +76,17 @@ export const reopen = async(req, res, next) => {
                 
         const cartsHistory = await reopenCart(req.params.cartId)
         res.status(203).json({ok: true, data: cartsHistory})
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const addRecipeToCart = async(req, res, next) => {
+    try {
+        console.log(req.body);
+
+        await recipeToCart(req.params.cartId, req.body)
+        res.status(203).json({ok: true, user: req.body})
     } catch (error) {
         next(error)
     }

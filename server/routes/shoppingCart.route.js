@@ -1,22 +1,38 @@
 import {Router} from 'express';
-import {createShoppingCart, getAllShoppingCartsByHouseholdId, updateItems, getCartById, deleteCart, markCartAsCompleted, getCartsHistory, reopen} from "../controllers/shoppingCart.contoller.js"
-const router = Router()
+import {createShoppingCart, getAllShoppingCartsByHouseholdId, updateItems, getCartById, deleteCart, markCartAsCompleted, getCartsHistory, reopen, addRecipeToCart} from "../controllers/shoppingCart.contoller.js"
+import verifyToken from '../middlewares/verifyToken.middleware.js';
 
-router.post(`/`, createShoppingCart)
+const shoppingCartRouter = Router()
 
-router.get(`/:householdId/householdId/active`, getAllShoppingCartsByHouseholdId)
+// Middleware for auth
+shoppingCartRouter.use(verifyToken)
 
-router.put(`/:cartId/items`, updateItems)
+// Create a cart
+shoppingCartRouter.post(`/`, createShoppingCart)
 
-router.get(`/:cartId`, getCartById)
+// Get all active carts in a specific household
+shoppingCartRouter.get(`/:householdId/householdId/active`, getAllShoppingCartsByHouseholdId)
 
-router.delete("/:householdId/:cartId", deleteCart)
+// Change the items in a specific cart in ONE request
+shoppingCartRouter.put(`/:cartId/items`, updateItems)
 
-router.put("/:cartId/completed", markCartAsCompleted)
+// Get a specific cart (by id)
+shoppingCartRouter.get(`/:cartId`, getCartById)
 
-router.get("/:householdId/history", getCartsHistory)
+// Delete a specific cart (by id)
+shoppingCartRouter.delete("/:householdId/:cartId", deleteCart)
 
-router.post("/:cartId/reopen", reopen)
+// Mark cart as completed
+shoppingCartRouter.put("/:cartId/completed", markCartAsCompleted)
+
+// Get all completed carts (history)
+shoppingCartRouter.get("/:householdId/history", getCartsHistory)
+
+// Reopen a completed cart
+shoppingCartRouter.post("/:cartId/reopen", reopen)
+
+// Add recipe to a cart
+shoppingCartRouter.put("/:cartId/addRecipeToCart", addRecipeToCart)
 
 
-export default router
+export default shoppingCartRouter

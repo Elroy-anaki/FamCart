@@ -26,17 +26,17 @@ const EmailVerification = lazy(() =>
 const NavBar = lazy(() => import("./components/NavBar/NavBar"));
 
 const CreateNewHousehold = lazy(() =>
-  import("./pages/CreateNewHousehold/CreateNewHousehold")
+  import("./pages/Household/CreateNewHousehold/CreateNewHousehold")
 );
-const ShoppingCartPage = lazy(() => import("./components/ShoppingCart/ShoppingCartPage"))
+const ShoppingCartPage = lazy(() => import("./pages/ShoppingCart/ShoppingCartPage"))
 
 const CreateRecipe = lazy(() => import("./forms/recipes/CreateRecipe"))
 
-const RecipePage = lazy(() => (import("./components/Recipes/RecipePage")))
+const RecipePage = lazy(() => (import("./pages/Recipe/RecipePage")))
 
 const Recipes = lazy(() => import("./components/Recipes/Recipes"))
 
-const ActiveCarts = lazy(() => import("./components/ShoppingCart/AllCartsPage"))
+const ActiveCarts = lazy(() => import("./pages/ShoppingCart/ActiveCartsPage"))
 
 const CartsHistory = lazy(() => import("./components/ShoppingCart/CartsHistory"))
 

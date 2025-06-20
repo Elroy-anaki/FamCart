@@ -9,11 +9,15 @@ import { AuthContext } from '../../context/AuthContext';
 import { notifyError } from '../../lib/Toasts';
 
 const Recipes = () => {
-  const [activeView, setActiveView] = useState('household'); // 'household' או 'my'
+
+  // Contexts
   const { householdInfo } = useContext(HouseholdContext);
   const { user } = useContext(AuthContext);
 
-  // שימוש ב-useQuery למתכונים של הבית
+  // States
+  const [activeView, setActiveView] = useState('household'); 
+
+  // Quereis - for fetch all recipes (private and public)
   const { 
     data: householdRecipesData, 
     isLoading: isLoadingHousehold,
@@ -28,7 +32,6 @@ const Recipes = () => {
     onError: () => notifyError('Failed fetching household recipes'),
   });
 
-  // שימוש ב-useQuery למתכונים שלי
   const { 
     data: myRecipesData, 
     isLoading: isLoadingMy,
@@ -104,13 +107,17 @@ const Recipes = () => {
       )}
 
       {/* Recipes Grid */}
-      {!isLoading && currentRecipes.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full max-w-7xl">
-          {currentRecipes.map((recipe) => (
-            <Recipe key={recipe._id} recipe={recipe} />
-          ))}
-        </div>
-      )}
+{!isLoading && currentRecipes.length > 0 && (
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full max-w-5xl">
+    {currentRecipes.map((recipe) => (
+      <Recipe
+        key={recipe._id}
+        recipe={recipe}
+        className="p-4 border rounded-md shadow-sm hover:shadow-md transition transform hover:scale-105"
+      />
+    ))}
+  </div>
+)}
     </div>
   );
 };

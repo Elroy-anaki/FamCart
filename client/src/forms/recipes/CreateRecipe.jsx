@@ -6,7 +6,11 @@ import { notifySuccess, notifyError } from '../../lib/Toasts';
 import { useNavigate } from 'react-router-dom';
 
 const CreateRecipe = () => {
+
+  // Hooks
   const navigate = useNavigate()
+
+  // Queries
   const { mutate: addRecipe } = useMutation({
     mutationKey: ['addRecipe'], 
     mutationFn: async (formData) =>

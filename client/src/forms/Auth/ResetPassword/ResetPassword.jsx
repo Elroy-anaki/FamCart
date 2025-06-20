@@ -6,6 +6,7 @@ import { notifyError, notifySuccess } from '../../../lib/Toasts.jsx';
 
 
 function ResetPassword() {
+  
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(window.location.search);
 

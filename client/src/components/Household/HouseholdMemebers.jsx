@@ -2,20 +2,21 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useContext } from "react";
 import { FaRegTrashAlt } from "react-icons/fa";
-import { HouseholdContext } from "../../../context/HouseholdContext";
-import { notifyError, notifySuccess } from "../../../lib/Toasts";
-import { AuthContext } from "../../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
-
+import { HouseholdContext } from "../../context/HouseholdContext";
+import { notifyError, notifySuccess } from "../../lib/Toasts";
+import { AuthContext } from "../../context/AuthContext";
 
 
 export function HouseholdMembers({ members, owner }) {
-    const queryClient = useQueryClient()
+
+    // Contexts
     const { householdInfo } = useContext(HouseholdContext)
     const { user } = useContext(AuthContext)
-    const navigate = useNavigate()
 
+    // Hooks
+    const queryClient = useQueryClient()
 
+    // Queries
     const { mutate: deleteMember } = useMutation({
         mutationKey: ["deleteMember"],
         mutationFn: async (memberId) => {

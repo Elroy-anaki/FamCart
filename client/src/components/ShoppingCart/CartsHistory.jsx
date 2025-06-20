@@ -6,11 +6,15 @@ import { HouseholdContext } from "../../context/HouseholdContext";
 import { notifyError, notifySuccess } from "../../lib/Toasts";
 
 export default function CartsHistory() {
-  const navigate = useNavigate();
+
+  // Contexts
   const { householdInfo } = useContext(HouseholdContext);
+
+  // Hooks
+  const navigate = useNavigate();
   const queryClient = useQueryClient()
 
-  // Fetch shopping carts using useQuery
+  // Queries
   const { data, isLoading, isError } = useQuery({
     queryKey: ["getCartsHistory"],
     queryFn: async () => {
@@ -18,6 +22,7 @@ export default function CartsHistory() {
       return response.data.data; // Assuming the carts are in `data.data`
     },
   });
+  
   const {mutate: reopenCart} = useMutation({
     mutationKey: ["reopenCart"],
     mutationFn: async (cartId) => {

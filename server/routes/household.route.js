@@ -1,32 +1,40 @@
 import {Router} from 'express';
 import {createHousehold, joinHousehold, getHouseholdInfo, deleteMember, leaveHousehold, householdDispersion, updateDays, updateBudget, changeJoinCode} from "../controllers/household.controller.js"
+import verifyToken from '../middlewares/verifyToken.middleware.js';
 
-const router = Router();
+
+const householdRouter = Router();
+
+// Middleware for auth
+householdRouter.use(verifyToken)
 
 // Create household
-router.post('/', createHousehold)
+householdRouter.post('/', createHousehold)
 
 // Join household
-router.post('/join', joinHousehold)
+householdRouter.post('/join', joinHousehold)
 
 // Get household by id (if there is no return null)
-router.get("/:userId", getHouseholdInfo)
+householdRouter.get("/:userId", getHouseholdInfo)
 
 // Admin can delete a member
-router.delete("/delete/:householdId/:memberId", deleteMember)
+householdRouter.delete("/delete/:householdId/:memberId", deleteMember)
 
 // Memeber delete himself
-router.delete("/leave/:householdId/:memberId", leaveHousehold)
+householdRouter.delete("/leave/:householdId/:memberId", leaveHousehold)
 
 // Admin can dispersion the household
-router.delete("/dispersion/:householdId", householdDispersion)
+householdRouter.delete("/dispersion/:householdId", householdDispersion)
 
-router.put("/updateDays/:householdId", updateDays)
+// Memeber can change the shopping days in the household
+householdRouter.put("/updateDays/:householdId", updateDays)
 
-router.put("/update/:householdId", updateBudget)
+// Memeber can change the budget in the household
+householdRouter.put("/update/:householdId", updateBudget)
 
-router.put("/change-join-code/:householdId", changeJoinCode)
+// Memeber can change the join-code in the household
+householdRouter.put("/change-join-code/:householdId", changeJoinCode)
 
 
 
-export default router
+export default householdRouter

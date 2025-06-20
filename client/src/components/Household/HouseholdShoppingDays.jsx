@@ -1,20 +1,26 @@
 import { useContext, useState } from "react";
 import { FaRegTrashAlt } from "react-icons/fa";
-import { HouseholdContext } from "../../../context/HouseholdContext";
+import { HouseholdContext } from "../../context/HouseholdContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { notifyError, notifySuccess } from "../../../lib/Toasts";
-
-const allDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+import { notifyError, notifySuccess } from "../../lib/Toasts";
+import {allDays} from "../../constants/index"
 
 export function HouseholdShoppingDays({ shoppingDays }) {
+
+    // Contexts
     const { householdInfo } = useContext(HouseholdContext);
-    const [isSaveOpen, setIsSaveOpen] = useState(false)
+    
+    // Hooks
     const queryClient = useQueryClient();
+
+    // States
+    const [isSaveOpen, setIsSaveOpen] = useState(false)
     const [updatedShoppingDays, setUpdatedShoppingDays] = useState(shoppingDays || []);
 
     const availableDays = allDays.filter(day => !updatedShoppingDays.includes(day));
 
+    // Utils
     const handleAddDay = (e) => {
         setIsSaveOpen(true)
         const selectedDay = e.target.value;
@@ -34,6 +40,8 @@ export function HouseholdShoppingDays({ shoppingDays }) {
         setIsSaveOpen(false)
     }
 
+
+    // Quereis
     const {mutate: updateDays} = useMutation({
         mutationKey: ["updateShoppingDays"],
         mutationFn: async () => ((await axios.put(`/households/updateDays/${householdInfo._id}`, {days: updatedShoppingDays})).data),
@@ -45,11 +53,9 @@ export function HouseholdShoppingDays({ shoppingDays }) {
         onError:() => {
             notifyError("Update days failed")
         }
-
     })
 
     
-
     return (
         <div className="flex flex-col gap-4">
             <div className="flex flex-wrap gap-3 bg-slate-100 rounded-xl px-4 py-4">

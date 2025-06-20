@@ -5,6 +5,8 @@ import { useState, useEffect, useContext } from "react";
 import { notifySuccess, notifyError } from "../../lib/Toasts";
 import { HouseholdContext } from "../../context/HouseholdContext";
 import { io } from "socket.io-client";
+import {unitOptions} from "../../constants/index"
+
 
 // הגדרת הסוקט (רק פעם אחת)
 const socket = io("http://localhost:3000", { autoConnect: false });
@@ -46,7 +48,7 @@ export default function ShoppingCartPage() {
       socket.off("cartNotification");
       socket.off("cartDeleted");
     };
-  }, [householdInfo._id, refetch]);
+  }, [householdInfo?._id, refetch]);
 
   useEffect(() => {
     if (error) {
@@ -175,13 +177,19 @@ export default function ShoppingCartPage() {
               className="w-20 border rounded px-2 py-1"
               disabled={data.isCompleted}
             />
-            <input
-              type="text"
-              value={item.unit}
+            <select
+              value={item.unit || ""}
               onChange={(e) => handleChangeItem(index, "unit", e.target.value)}
-              className="w-24 border rounded px-2 py-1"
+              className="w-32 border rounded px-2 py-1 min-w-[120px]"
               disabled={data.isCompleted}
-            />
+            >
+              <option value="">unit</option>
+              {unitOptions.map((unit, idx) => (
+                <option key={idx} value={unit}>
+                  {unit}
+                </option>
+              ))}
+            </select>
             <label className="flex items-center gap-1">
               <input
                 type="checkbox"
@@ -222,13 +230,18 @@ export default function ShoppingCartPage() {
               onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
               className="w-20 border rounded px-2 py-1"
             />
-            <input
-              type="text"
-              placeholder="Unit"
+            <select
               value={newItem.unit}
               onChange={(e) => setNewItem({ ...newItem, unit: e.target.value })}
-              className="w-24 border rounded px-2 py-1"
-            />
+              className="w-32 border rounded px-2 py-1 min-w-[120px]"
+            >
+              <option value="">Unit</option>
+              {unitOptions.map((unit, idx) => (
+                <option key={idx} value={unit}>
+                  {unit}
+                </option>
+              ))}
+            </select>
             <button
               onClick={handleAddItem}
               className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg"

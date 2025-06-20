@@ -1,4 +1,4 @@
-import { ShoppingCartsInfo } from "../ShoppingCartsInfo/ShoppingCartsInfo";
+import { ShoppingCartsInfo } from "../../components/ShoppingCart/ShoppingCartsInfo";
 
 
 export default function ActiveCartsPage() {

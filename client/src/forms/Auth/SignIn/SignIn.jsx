@@ -6,6 +6,7 @@ import { AuthContext } from "../../../context/AuthContext";
 import { notifyError, notifySuccess } from "../../../lib/Toasts";
 import { GoogleLogin, googleLogout } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
+import { HouseholdContext } from "../../../context/HouseholdContext";
 
 const initialUserValues = {
   userEmail: "",
@@ -14,7 +15,8 @@ const initialUserValues = {
 
 function SignIn() {
 
-  const { isAuth, signIn, signInWithGoogle } = useContext(AuthContext);
+  const { isAuth, signIn } = useContext(AuthContext);
+  const {getHouseholdInfo,} = useContext(HouseholdContext)
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,8 +35,9 @@ function SignIn() {
           try {
             await signIn(values);
             actions.resetForm();
+            await getHouseholdInfo()
             notifySuccess('Welcome!');
-            navigate('/household');
+            navigate('/');
           } catch (error) {
             console.log(error);
             notifyError(error.response.data.msg);
@@ -120,7 +123,7 @@ function SignIn() {
                 {isSubmitting ? "Processing..." : "Sign In"}
               </button>
               
-              <div className="w-full py-2 md:py-3 flex justify-center items-center">
+              {/* <div className="w-full py-2 md:py-3 flex justify-center items-center">
                 <GoogleLogin
                   onSuccess={(credentialResponse) => {
                     signInWithGoogle(jwtDecode(credentialResponse.credential), false);
@@ -133,7 +136,7 @@ function SignIn() {
                   logo_alignment="left"
                   login_uri=""
                 />
-              </div>
+              </div> */}
   
               <div className="text-center text-gray-600 text-xs md:text-sm mt-2 md:mt-4">
                 <p>

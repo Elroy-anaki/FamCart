@@ -1,14 +1,19 @@
-import React, { useContext, useState, useRef } from 'react';
+import React, { useContext, useState } from 'react';
 import { HouseholdContext } from "../../context/HouseholdContext";
 import { AuthContext } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 import { useQueryClient } from '@tanstack/react-query';
+import {unitOptions} from "../../constants/index"
 
 const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitted:', formData) }) => {
+
+  // Contexts
   const { householdInfo } = useContext(HouseholdContext);
   const { user } = useContext(AuthContext);
 
+  // Hooks
   const queryClient = useQueryClient();
+
+  // States
   const [linkHousehold, setLinkHousehold] = useState(false); // Changed from ref to state
   const [values, setValues] = useState({
     recipeName: '',
@@ -18,6 +23,8 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
     image: null,
   });
   const [isSubmitting, setSubmitting] = useState(false);
+
+
 
   const setFieldValue = (field, value) => {
     setValues((prev) => ({ ...prev, [field]: value }));
@@ -126,8 +133,7 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
 
                 {/* Ingredient Unit */}
                 <div>
-                  <input
-                    placeholder="Unit (optional)"
+                  <select
                     value={ingredient.unit}
                     onChange={(e) => {
                       const newIngredients = [...values.ingredients];
@@ -135,7 +141,14 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
                       setFieldValue('ingredients', newIngredients);
                     }}
                     className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  >
+                    <option value="">Select Unit</option>
+                    {unitOptions.map((unit) => (
+                      <option key={unit} value={unit}>
+                        {unit}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 

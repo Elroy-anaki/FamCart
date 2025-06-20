@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 
 function verifyToken(req, res, next) {
     try {
+        console.log("Verify token ------------------------------")
         const { token } = req.cookies;
 
         if (!token) throw new Error("Token not Exist");
@@ -10,7 +11,7 @@ function verifyToken(req, res, next) {
 
         if (!decode) throw new Error("Token Not Valid")
 
-        req.user = decode;
+        req.body.user = decode;
 
         next();
 

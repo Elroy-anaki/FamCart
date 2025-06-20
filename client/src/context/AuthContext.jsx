@@ -11,7 +11,6 @@ export const AuthContext = createContext();
 function AuthProvider({ children }) {
   const [isAuth, setIsAuth] = useState(false);
   const [user, setUser] = useState(null);
-
   const [hasVerified, setHasVerified] = useState(false);
 
   useQuery({
@@ -51,26 +50,27 @@ function AuthProvider({ children }) {
       notifyError(error.response.data.msg);
     },
   });
-  const { mutate: signUpGoogle } = useMutation({
-    mutationKey: ["signUpWithGoogle"],
-    mutationFn: async (data) => await axios.post("/users/sign-up/google", data),
-    onSuccess: async (data) => {
-      await signInWithGoogle(data.data.data);
-      notifySuccess("Welcome To Our Restaurant Please sign in!");
-    },
-    onError: (error) => {
-      notifyError(error);
-    },
-  });
 
-  async function signInWithGoogle(credentials, afterSignUp = true) {
-    console.log(credentials);
-    const signInValues = {
-      userEmail: afterSignUp ? credentials.userEmail : credentials.email,
-      userPassword: afterSignUp ? credentials.userPassword : credentials.sub,
-    };
-    await signIn(signInValues);
-  }
+  // const { mutate: signUpGoogle } = useMutation({
+  //   mutationKey: ["signUpWithGoogle"],
+  //   mutationFn: async (data) => await axios.post("/users/sign-up/google", data),
+  //   onSuccess: async (data) => {
+  //     await signInWithGoogle(data.data.data);
+  //     notifySuccess("Welcome To Our Restaurant Please sign in!");
+  //   },
+  //   onError: (error) => {
+  //     notifyError(error);
+  //   },
+  // });
+
+  // async function signInWithGoogle(credentials, afterSignUp = true) {
+  //   console.log(credentials);
+  //   const signInValues = {
+  //     userEmail: afterSignUp ? credentials.userEmail : credentials.email,
+  //     userPassword: afterSignUp ? credentials.userPassword : credentials.sub,
+  //   };
+  //   await signIn(signInValues);
+  // }
 
   const { refetch: signOut } = useQuery({
     queryKey: ["signOut"],
@@ -104,8 +104,8 @@ function AuthProvider({ children }) {
     isAuth,
     setIsAuth,
     signUp,
-    signUpGoogle,
-    signInWithGoogle,
+    // signUpGoogle,
+    // signInWithGoogle,
     signIn,
     signOut,
     verifyEmail,

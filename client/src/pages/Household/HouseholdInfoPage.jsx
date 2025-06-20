@@ -1,8 +1,8 @@
 import { useContext, useState } from "react";
 import { HouseholdContext } from "../../context/HouseholdContext";
-import { ShoppingCartsInfo } from "../../components/ShoppingCartsInfo/ShoppingCartsInfo";
-import { HouseholdMembers } from "../../components/Household/HouseholdMembers/HouseholdMemebers";
-import { HouseholdShoppingDays } from "../../components/Household/HouseholdShoppingDays/HouseholdShoppingDays";
+import { ShoppingCartsInfo } from "../../components/ShoppingCart/ShoppingCartsInfo";
+import { HouseholdMembers } from "../../components/Household/HouseholdMemebers";
+import { HouseholdShoppingDays } from "../../components/Household/HouseholdShoppingDays";
 import { notifyError, notifySuccess } from "../../lib/Toasts";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";

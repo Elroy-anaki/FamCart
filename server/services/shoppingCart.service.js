@@ -114,3 +114,60 @@ export const getCartsHistoryByHouseholdId = async (householdId) => {
         throw error;
     }
 };
+
+export const recipeToCart = async (cartId, data) => {
+    try {
+        console.log(cartId)
+        if (cartId === "1") {
+            // Create a new shopping cart with the provided ingredients
+            const newCart = await ShoppingCart.create({
+                cartName: data.recipeName,
+                cartItems: data.ingredients.map((ingredient) => ({
+                    name: ingredient.name,
+                    quantity: ingredient.quantity,
+                    unit: ingredient.unit || null,
+                    completed: false, // Default to not completed
+                })),
+                cartTotalPrice: 0, // Default total price
+                cartOwner: data.user.payload._id, // Set cartOwner if needed
+                householdId: data.householdId, // Set householdId if needed
+            });
+
+            return newCart;
+        }
+
+        // Find the shopping cart by ID
+        const cart = await ShoppingCart.findById(cartId);
+        if (!cart) throw new Error("Cart not found");
+
+        // Update cart items based on the ingredients array
+        const updatedCartItems = [...cart.cartItems];
+
+        data.ingredients.forEach((ingredient) => {
+            const existingItemIndex = updatedCartItems.findIndex(
+                (item) => item.name === ingredient.name
+            );
+
+            if (existingItemIndex !== -1) {
+                // Update the quantity if the ingredient already exists
+                updatedCartItems[existingItemIndex].quantity += ingredient.quantity;
+            } else {
+                // Add the ingredient as a new item
+                updatedCartItems.push({
+                    name: ingredient.name,
+                    quantity: ingredient.quantity,
+                    unit: ingredient.unit || null,
+                    completed: false, // Default to not completed
+                });
+            }
+        });
+
+        // Save the updated cart items back to the shopping cart
+        cart.cartItems = updatedCartItems;
+        await cart.save();
+
+        return cart;
+    } catch (error) {
+        throw error;
+    }
+};
