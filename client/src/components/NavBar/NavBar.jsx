@@ -31,9 +31,9 @@ function NavBar() {
     closeDropdown();
   };
 
-  const handleSignOut = () => {
-    signOut();
-    navigate('/');
+  const handleSignOut = async() => {
+    await signOut();
+    navigate('/auth/sign-in');
     closeMenu();
   };
 

@@ -73,9 +73,9 @@ function AuthProvider({ children }) {
   //   await signIn(signInValues);
   // }
 
-  const { refetch: signOut } = useQuery({
-    queryKey: ["signOut"],
-    queryFn: async () => {
+  const { mutateAsync: signOut } = useMutation({
+    mutationKey: ["signOut"],
+    mutationFn: async () => {
       try {
         const { data } = await axios.get("/auth/sign-out");
         setIsAuth(false);

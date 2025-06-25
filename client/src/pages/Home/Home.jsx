@@ -1,29 +1,21 @@
-import { useContext, useState } from "react";
-
-import {AuthContext} from "../../context/AuthContext"
-
+import { useContext } from "react";
+import { Navigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
+import { HouseholdContext } from "../../context/HouseholdContext";
 import HouseholdOptionsPage from "../Household/HouseholdOptionsPage";
 import HouseholdInfoPage from "../Household/HouseholdInfoPage";
-import { HouseholdContext } from "../../context/HouseholdContext";
 
 function Home() {
-  
-  const {user} = useContext(AuthContext)
-  const {householdInfo} = useContext(HouseholdContext)
+  const { user } = useContext(AuthContext);
+  const { householdInfo } = useContext(HouseholdContext);
 
-  if (!householdInfo && user){
-    return (
-      <>
-      <HouseholdOptionsPage />
-      </>
-    )
+  if (!user) return <Navigate to="/auth/sign-in" replace />;
+
+  if (!householdInfo) {
+    return <HouseholdOptionsPage />;
   }
-  return(
-    <> <HouseholdInfoPage /></>
-  )
- 
 
-  
+  return <HouseholdInfoPage />;
 }
 
 export default Home;
