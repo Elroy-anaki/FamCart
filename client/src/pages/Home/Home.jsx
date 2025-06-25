@@ -7,8 +7,8 @@ import HouseholdInfoPage from "../Household/HouseholdInfoPage";
 
 function Home() {
   const { user } = useContext(AuthContext);
-  const { householdInfo } = useContext(HouseholdContext);
-
+  const { householdInfo, getHouseholdInfo } = useContext(HouseholdContext);
+  getHouseholdInfo()
   if (!user) return <Navigate to="/auth/sign-in" replace />;
 
   if (!householdInfo) {

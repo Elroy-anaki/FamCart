@@ -9,7 +9,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 export default function CreateNewHousehold(){
 
-    const {user, getUserData} = useContext(AuthContext)
+    const {user} = useContext(AuthContext)
     const navigate = useNavigate()
     const queryClient = useQueryClient()
 
@@ -19,7 +19,7 @@ export default function CreateNewHousehold(){
             const {data} = await axios.post("/households", newHousehold)
             console.log(data)
             notifySuccess(`Create a new houshold. Join code is ${data.data.householdJoinCode}`)
-            await queryClient.invalidateQueries({queryKey: ["getHouseholdInfo, verifyToken"]})
+            queryClient.invalidateQueries({queryKey: ["verifyToken", "getHouseholdInfo" ]})
 
             navigate("/household")
 

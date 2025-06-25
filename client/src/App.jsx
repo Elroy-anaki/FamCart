@@ -65,7 +65,7 @@ function AppRoutes() {
     createRoutesFromElements(
       <Route path="/" element={<Root />} errorElement={<ErrorPage />}>
         <Route index element={isAuth ? <Home /> : <SignIn />} />
-        <Route path="household" element={isAuth ? <Home /> : null} />
+        <Route path="household" element={isAuth ? <Home /> : <Navigate to="/auth/sign-in" replace />} />
 
         {/* Public Routes */}
         <Route
