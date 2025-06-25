@@ -22,6 +22,21 @@ function NavBar() {
     setIsDropdownOpen({ carts: false, recipes: false });
   };
 
+  const closeDropdown = () => {
+    setIsDropdownOpen({ carts: false, recipes: false });
+  };
+
+  const handleLinkClick = () => {
+    closeMenu();
+    closeDropdown();
+  };
+
+  const handleSignOut = () => {
+    signOut();
+    navigate('/');
+    closeMenu();
+  };
+
   return (
     <nav className="w-full bg-gradient-to-r from-green-900 via-green-700 to-green-800 relative z-40">
       <div className="max-w-screen-2xl w-11/12 mx-auto flex justify-between items-center py-3 relative">
@@ -30,12 +45,14 @@ function NavBar() {
           <Link
             to="/"
             className="transition-transform hover:scale-105 flex items-center gap-2 md:gap-4"
+            onClick={handleLinkClick}
           >
-            {/* <img src="/Logo.png" alt="Logo" className="w-10 md:w-14 rounded-2xl" /> */}
+            <img src="/FamCart.png" alt="Logo" className="w-10 md:w-14 rounded-2xl" />
           </Link>
           <Link
-            to="/"
+            to="/profile"
             className="transition-transform hover:scale-105 flex items-center gap-2 md:gap-4"
+            onClick={handleLinkClick}
           >
             <p className="text-white text-2xl">{user?.userName}</p>
           </Link>
@@ -52,6 +69,7 @@ function NavBar() {
                            transition-all duration-300 
                            hover:bg-white
                            rounded-lg"
+                onClick={closeDropdown}
               >
                 Household
               </Link>
@@ -75,6 +93,7 @@ function NavBar() {
                     <Link
                       to="/household/carts-active"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={closeDropdown}
                     >
                       Active Carts
                     </Link>
@@ -83,6 +102,7 @@ function NavBar() {
                     <Link
                       to="/household/carts-history"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={closeDropdown}
                     >
                       History
                     </Link>
@@ -109,6 +129,7 @@ function NavBar() {
                     <Link
                       to="/household/recipes/create-new"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={closeDropdown}
                     >
                       Create
                     </Link>
@@ -117,6 +138,7 @@ function NavBar() {
                     <Link
                       to="/household/recipes"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={closeDropdown}
                     >
                       All Recipes
                     </Link>
@@ -133,6 +155,7 @@ function NavBar() {
                            transition-all duration-300 
                            hover:bg-white
                            rounded-lg"
+                onClick={closeDropdown}
               >
                 Profile
               </Link>
@@ -155,10 +178,7 @@ function NavBar() {
           >
             {isAuth ? (
               <button
-                onClick={() => {
-                  signOut();
-                  navigate('/auth/sign-in');
-                }}
+                onClick={handleSignOut}
                 className="hover:text-white flex gap-2 justify-center items-center font-semibold"
               >
                 Sign Out
@@ -231,8 +251,9 @@ function NavBar() {
                 className="block text-base py-2 px-4 text-white hover:text-black 
                            font-medium tracking-wide text-center
                            transition-all duration-300 
-                           hover:bg-white"
-                onClick={closeMenu}
+                           hover:bg-white
+                           rounded-lg"
+                onClick={handleLinkClick}
               >
                 Household
               </Link>
@@ -243,18 +264,18 @@ function NavBar() {
                 className="block text-base py-2 px-4 text-white hover:text-black 
                            font-medium tracking-wide text-center
                            transition-all duration-300 
-                           hover:bg-white"
+                           hover:bg-white
+                           rounded-lg"
               >
                 Shopping Carts
               </button>
               {isDropdownOpen.carts && (
-                <ul className="bg-white shadow-lg rounded-lg w-40">
-  
+                <ul className="bg-white shadow-lg rounded-lg w-40 mt-2">
                   <li>
                     <Link
                       to="/household/carts-active"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      onClick={closeMenu}
+                      onClick={handleLinkClick}
                     >
                       Active Carts
                     </Link>
@@ -263,7 +284,7 @@ function NavBar() {
                     <Link
                       to="/household/carts-history"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      onClick={closeMenu}
+                      onClick={handleLinkClick}
                     >
                       History
                     </Link>
@@ -277,17 +298,18 @@ function NavBar() {
                 className="block text-base py-2 px-4 text-white hover:text-black 
                            font-medium tracking-wide text-center
                            transition-all duration-300 
-                           hover:bg-white"
+                           hover:bg-white
+                           rounded-lg"
               >
                 Recipes
               </button>
               {isDropdownOpen.recipes && (
-                <ul className="bg-white shadow-lg rounded-lg w-40">
+                <ul className="bg-white shadow-lg rounded-lg w-40 mt-2">
                   <li>
                     <Link
                       to="/household/recipes/create-new"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      onClick={closeMenu}
+                      onClick={handleLinkClick}
                     >
                       Create
                     </Link>
@@ -296,7 +318,7 @@ function NavBar() {
                     <Link
                       to="/household/recipes"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      onClick={closeMenu}
+                      onClick={handleLinkClick}
                     >
                       All Recipes
                     </Link>
@@ -310,12 +332,31 @@ function NavBar() {
                 className="block text-base py-2 px-4 text-white hover:text-black 
                            font-medium tracking-wide text-center
                            transition-all duration-300 
-                           hover:bg-white"
-                onClick={closeMenu}
+                           hover:bg-white
+                           rounded-lg"
+                onClick={handleLinkClick}
               >
                 Profile
               </Link>
             </li>
+            
+            {/* Mobile Sign Out Button */}
+            {isAuth && (
+              <li className="border-t border-green-600 pt-2 mt-2 w-full">
+                <button
+                  onClick={handleSignOut}
+                  className="flex gap-2 justify-center items-center text-base py-2 px-4 text-white hover:text-black 
+                             font-medium tracking-wide text-center
+                             transition-all duration-300 
+                             hover:bg-white
+                             rounded-lg
+                             w-full"
+                >
+                  Sign Out
+                  <PiSignOut size={20} />
+                </button>
+              </li>
+            )}
           </ul>
         </div>
       )}

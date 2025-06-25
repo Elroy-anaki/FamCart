@@ -1,15 +1,15 @@
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../../context/AuthContext";
 import HouseholdForm from "./HouseholdForm";
 import React, { useContext } from "react";
 import axios from 'axios'
 import { useNavigate } from "react-router-dom";
-import { notifyError, notifySuccess } from "../../lib/Toasts";
+import { notifyError, notifySuccess } from "../../../lib/Toasts";
 import { useQueryClient } from "@tanstack/react-query";
 
 
 export default function CreateNewHousehold(){
 
-    const {user} = useContext(AuthContext)
+    const {user, getUserData} = useContext(AuthContext)
     const navigate = useNavigate()
     const queryClient = useQueryClient()
 
@@ -19,7 +19,7 @@ export default function CreateNewHousehold(){
             const {data} = await axios.post("/households", newHousehold)
             console.log(data)
             notifySuccess(`Create a new houshold. Join code is ${data.data.householdJoinCode}`)
-            await queryClient.invalidateQueries({queryKey: ["getHouseholdInfo"]})
+            await queryClient.invalidateQueries({queryKey: ["getHouseholdInfo, verifyToken"]})
 
             navigate("/household")
 

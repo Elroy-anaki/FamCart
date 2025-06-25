@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import {createShoppingCart, getAllShoppingCartsByHouseholdId, updateItems, getCartById, deleteCart, markCartAsCompleted, getCartsHistory, reopen, addRecipeToCart} from "../controllers/shoppingCart.contoller.js"
+import {createShoppingCart, getAllShoppingCartsByHouseholdId, updateItems, getCartById, deleteCart, markCartAsCompleted, getCartsHistory, reopen, addRecipeToCart, getTotalExpenses} from "../controllers/shoppingCart.contoller.js"
 import verifyToken from '../middlewares/verifyToken.middleware.js';
 
 const shoppingCartRouter = Router()
@@ -32,7 +32,10 @@ shoppingCartRouter.get("/:householdId/history", getCartsHistory)
 shoppingCartRouter.post("/:cartId/reopen", reopen)
 
 // Add recipe to a cart
-shoppingCartRouter.put("/:cartId/addRecipeToCart", addRecipeToCart)
+shoppingCartRouter.put("/:cartId/:recipeId/addRecipeToCart", addRecipeToCart)
+
+// Get Total expenses 
+shoppingCartRouter.get("/total-expenses/:householdId", getTotalExpenses)
 
 
 export default shoppingCartRouter

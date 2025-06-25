@@ -1,10 +1,9 @@
 import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import {createHouseholdSchema} from "../../schemas/householdSchemas"
+import {createHouseholdSchema} from "../../../schemas/householdSchemas"
 
 // Days of the week excluding Saturday
 const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-
 
 
 const HouseholdForm = ({ onSubmit }) => {

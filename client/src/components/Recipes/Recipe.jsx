@@ -1,10 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import React from 'react';
+import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { notifyError, notifySuccess } from '../../lib/Toasts';
+import { HouseholdContext } from '../../context/HouseholdContext';
 
 const Recipe = ({ recipe }) => {
+
+  const { getHouseholdInfo } = useContext(HouseholdContext)
 
   // Hooks
   const queryClient = useQueryClient();
@@ -37,7 +40,10 @@ const Recipe = ({ recipe }) => {
       {/* Recipe Image */}
       <div 
         className="mb-4 w-full h-32 bg-gray-200 rounded-md flex items-center justify-center overflow-hidden cursor-pointer hover:opacity-90 transition-opacity" 
-        onClick={() => navigate(`/household/recipes/${_id}`)}
+        onClick={() => {
+          getHouseholdInfo()
+          navigate(`/household/recipes/${_id}`)
+        }}
       >
         {image ? (
           <img

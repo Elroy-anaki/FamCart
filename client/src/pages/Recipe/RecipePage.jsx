@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, data } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { notifyError, notifySuccess } from "../../lib/Toasts";
@@ -20,6 +20,7 @@ const RecipePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [showCartsSelect, setshowCartSelect] = useState(false)
   const[ingredientsToAdd, setIngredientsToAdd] = useState([])
+  const [cartIdToAdd, setCartIdToAdd] = useState("")
   const [editedRecipe, setEditedRecipe] = useState({
     recipeName: "",
     image: "",
@@ -82,10 +83,15 @@ const RecipePage = () => {
 
   const {mutate: addRecipeToCart} = useMutation({
     mutationKey:["addRecipeToCart"],
-    mutationFn: async(cartId) => (
-      await axios.put(`/shoppingCart/${cartId}/addRecipeToCart`, {ingredients: ingredientsToAdd, householdId: householdInfo._id, recipeName: recipe.recipeName})
-    ),
-    onSuccess: () => notifySuccess("Add Recipe To a Cart!"),
+    mutationFn: async() => {
+      const {data} = await axios.put(`/shoppingCart/${cartIdToAdd}/${recipe._id}/addRecipeToCart`, { householdId: householdInfo._id, recipeName: recipe.recipeName})
+      return data
+    },
+    onSuccess: (data) => {
+      console.log("data.data._id", data.data._id)
+      notifySuccess("Add Recipe To a Cart!");
+      navigate(`/household/shopping-cart/${data.data._id}`)
+    },
     onError: () => notifyError("Failed Adding Recipe To a Cart!")
   })
 
@@ -112,10 +118,15 @@ const RecipePage = () => {
         <button onClick={() => deleteRecipe()} className="w-full sm:w-auto bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600" disabled={isDeleting}>{isDeleting ? "Deleting..." : "Delete"}</button>
         <button onClick={() => {setshowCartSelect(!showCartsSelect); console.log(householdInfo)}} className="w-full sm:w-auto bg-purple-500 text-white px-4 py-2 rounded-md hover:bg-purple-600">Add to cart</button>
         {showCartsSelect && (
-          <select className="bg-gray-600 text-white px-4 py-2 rounded-md" onChange={(e) =>{ console.log(recipe.ingredients, e.target.value);setIngredientsToAdd(recipe.ingredients); addRecipeToCart(e.target.value)}}>
-            <option value=" ">choose</option>
-            <option value="1">new</option>
-            {householdInfo.householdShoppingCarts.map((cart, index) => (
+          <select className="bg-gray-600 text-white px-4 py-2 rounded-md" onChange={(e) =>{ 
+            console.log(recipe._id, e.target.value)
+            setCartIdToAdd(e.target.value)
+            // setIngredientsToAdd(recipe.ingredients); 
+            addRecipeToCart()
+            }}>
+            <option value=" " >choose</option>
+            <option value="new">new</option>
+            {householdInfo.householdShoppingCarts.filter((cart) => !cart.isCompleted).map((cart, index) => (
               <option  value={cart._id}>{cart.cartName}</option>
             ))}
           </select>

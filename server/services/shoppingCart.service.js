@@ -1,5 +1,6 @@
 import ShoppingCart from "../models/shoppingCart.model.js"
 import Household from "../models/household.model.js"
+import Recipe from "../models/recipe.model.js"
 
 
 export const createNewShoppingCart = async(shoppingCartInput) => {
@@ -102,7 +103,7 @@ export const getCartsHistoryByHouseholdId = async (householdId) => {
 
         // Create a new cart based on the old cart
         const newCart = await ShoppingCart.create({
-            cartName: `${oldCart.cartName} (Reopened)`,
+            cartName: `${oldCart.cartName}`,
             cartItems: newCartItems,
             cartTotalPrice: 0, // Reset total price
             cartOwner: oldCart.cartOwner,
@@ -115,60 +116,104 @@ export const getCartsHistoryByHouseholdId = async (householdId) => {
     }
 };
 
-export const recipeToCart = async (cartId, data) => {
+export const recipeToCart = async (cartId,recipeId, data) => {
     try {
         console.log(cartId)
-        if (cartId === "1") {
+        console.log(recipeId)
+        console.log(data.user)
+    
+
+        const recipe = await Recipe.findById(recipeId)
+        const recipeIngredients = recipe.ingredients;
+
+        console.log("data.user.payload.householdId", data.user.payload.householdId);
+        const household = await Household.findById(data.user.payload.householdId)
+        console.log("household", household)
+
+         if (cartId === "new") {
             // Create a new shopping cart with the provided ingredients
-            const newCart = await ShoppingCart.create({
-                cartName: data.recipeName,
-                cartItems: data.ingredients.map((ingredient) => ({
-                    name: ingredient.name,
-                    quantity: ingredient.quantity,
-                    unit: ingredient.unit || null,
-                    completed: false, // Default to not completed
-                })),
-                cartTotalPrice: 0, // Default total price
-                cartOwner: data.user.payload._id, // Set cartOwner if needed
-                householdId: data.householdId, // Set householdId if needed
-            });
+             const newCart = await ShoppingCart.create({
+                 cartName: recipe.recipeName,
+                 cartItems: recipeIngredients.map((ingredient) => ({
+                     name: ingredient.name,
+                     quantity: ingredient.quantity,
+                     unit: ingredient.unit || null,
+                     completed: false, // Default to not completed
+                 })),
+                 cartTotalPrice: 0,  //Default total price
+                 cartOwner: data.user.payload._id, // Set cartOwner if needed
+                 householdId: data.user.payload.householdId, // Set householdId if needed
+             });
+             household.householdShoppingCarts.push(newCart._id)
+             await household.save()
+             return newCart;
+         }
 
-            return newCart;
-        }
+        // // Find the shopping cart by ID
+         const cart = await ShoppingCart.findById(cartId);
+         if (!cart) throw new Error("Cart not found");
 
-        // Find the shopping cart by ID
-        const cart = await ShoppingCart.findById(cartId);
-        if (!cart) throw new Error("Cart not found");
+         // Update cart items based on the ingredients array
+         const updatedCartItems = [...cart.cartItems];
 
-        // Update cart items based on the ingredients array
-        const updatedCartItems = [...cart.cartItems];
-
-        data.ingredients.forEach((ingredient) => {
+         recipeIngredients.forEach((ingredient) => {
             const existingItemIndex = updatedCartItems.findIndex(
                 (item) => item.name === ingredient.name
             );
 
             if (existingItemIndex !== -1) {
-                // Update the quantity if the ingredient already exists
-                updatedCartItems[existingItemIndex].quantity += ingredient.quantity;
-            } else {
-                // Add the ingredient as a new item
+                 // Update the quantity if the ingredient already exists
+                 updatedCartItems[existingItemIndex].quantity += ingredient.quantity;
+             } else {
+                 // Add the ingredient as a new item
                 updatedCartItems.push({
                     name: ingredient.name,
                     quantity: ingredient.quantity,
                     unit: ingredient.unit || null,
-                    completed: false, // Default to not completed
+                    completed: false, //Default to not completed
                 });
-            }
-        });
+             }
+         });
 
-        // Save the updated cart items back to the shopping cart
-        cart.cartItems = updatedCartItems;
-        await cart.save();
+         // Save the updated cart items back to the shopping cart
+         cart.cartItems = updatedCartItems;
+         await cart.save();
 
-        return cart;
+         return cart;
     } catch (error) {
         throw error;
     }
 };
 
+
+export const getTotalExpensesToHousehold = async (householdId, query) => {
+  try {
+    const { month, year } = query;
+
+    if (!month || !year) {
+      throw new Error("Missing month or year in query parameters");
+    }
+
+    const monthNum = parseInt(month); 
+    const yearNum = parseInt(year);
+
+    const completedCarts = await ShoppingCart.find({
+      householdId,
+      isCompleted: true,
+      completedAt: {
+        $gte: new Date(yearNum, monthNum, 1),              
+        $lt: new Date(yearNum, monthNum + 1, 1),             
+      },
+    });
+
+    // חישוב סכום כולל
+    const totalExpenses = completedCarts.reduce((sum, cart) => {
+      return sum + (cart.cartTotalPrice || 0);
+    }, 0);
+
+    return totalExpenses
+  } catch (error) {
+    console.error("Failed to get total expenses:", error);
+    throw error;
+  }
+};

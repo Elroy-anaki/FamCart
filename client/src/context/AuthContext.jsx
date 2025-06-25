@@ -13,17 +13,18 @@ function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [hasVerified, setHasVerified] = useState(false);
 
-  useQuery({
+  const { refetch:getUserData, isFetching, data } = useQuery({
     queryKey: ["verifyToken"],
     queryFn: async () => {
       const { data } = await axios.get("/auth/verify-token");
       setIsAuth(data.success);
       setUser(data.data.payload);
+      console.log(data.data.payload);
       setHasVerified(true); 
       return data;
     },
     enabled: !hasVerified, 
-    staleTime: 1000 * 60 * 10,
+    staleTime: 1000 * 60 * 10, // 10 דקות
     refetchOnMount: false,
     retry: 1,
   });
@@ -109,6 +110,7 @@ function AuthProvider({ children }) {
     signIn,
     signOut,
     verifyEmail,
+    getUserData
   };
 
   return (

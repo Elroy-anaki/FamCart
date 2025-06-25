@@ -48,7 +48,7 @@ function Root() {
   return (
     <div className="flex flex-col h-screen">
       <header className="h-[10vh]">
-        {isAuth ?<NavBar /> : <SignIn/> }
+        {isAuth ?<NavBar /> : null }
         
       </header>
       <main className="flex-1 overflow-y-auto">
@@ -64,6 +64,7 @@ function AppRoutes() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<Root />} errorElement={<ErrorPage />}>
+        <Route index element={isAuth ? <Home /> : <SignIn />} />
         <Route path="household" element={isAuth ? <Home /> : null} />
 
         {/* Public Routes */}
