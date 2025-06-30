@@ -62,6 +62,10 @@ export default function ShoppingCartPage() {
   const [newItem, setNewItem] = useState({ name: "", quantity: "", unit: "" });
   const [addTotalPrice, setAddTotalPrice] = useState(false);
   const [totalPrice, setTotalPrice] = useState(0);
+  
+  // הוספת state להקלטה קולית
+  const [isListening, setIsListening] = useState(false);
+  const [activeInputIndex, setActiveInputIndex] = useState(null);
 
   useEffect(() => {
     if (data) {
@@ -132,6 +136,50 @@ export default function ShoppingCartPage() {
     setItems(updated);
   };
 
+  // פונקציה להפעלת הקלטה קולית
+  const startListening = (inputIndex) => {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      notifyError("Speech recognition is not supported in this browser");
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    
+    recognition.lang = 'he-IL'; // עברית
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    
+    setIsListening(true);
+    setActiveInputIndex(inputIndex);
+    
+    recognition.onstart = () => {
+      notifySuccess("התחלת הקלטה...");
+    };
+    
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      
+      if (inputIndex === 'new') {
+        setNewItem(prev => ({ ...prev, name: transcript }));
+      } else {
+        handleChangeItem(inputIndex, "name", transcript);
+      }
+    };
+    
+    recognition.onerror = (event) => {
+      console.error('Speech recognition error:', event.error);
+      notifyError("שגיאה בהקלטה קולית");
+    };
+    
+    recognition.onend = () => {
+      setIsListening(false);
+      setActiveInputIndex(null);
+    };
+    
+    recognition.start();
+  };
+
   if (isLoading || !data) return <div>Loading...</div>;
 
   return (
@@ -163,13 +211,28 @@ export default function ShoppingCartPage() {
             key={index}
             className="flex flex-wrap items-center gap-2 border p-3 rounded-md"
           >
-            <input
-              type="text"
-              value={item.name}
-              onChange={(e) => handleChangeItem(index, "name", e.target.value)}
-              className="flex-1 border rounded px-2 py-1"
-              disabled={data.isCompleted}
-            />
+            <div className="flex-1 flex items-center gap-2">
+              <input
+                type="text"
+                value={item.name}
+                onChange={(e) => handleChangeItem(index, "name", e.target.value)}
+                className="flex-1 border rounded px-2 py-1"
+                disabled={data.isCompleted}
+              />
+              {!data.isCompleted && (
+                <button
+                  onClick={() => startListening(index)}
+                  className={`p-2 rounded-full transition-colors ${
+                    isListening && activeInputIndex === index
+                      ? 'bg-red-500 text-white animate-pulse'
+                      : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                  }`}
+                  title="הקלטה קולית"
+                >
+                  🎤
+                </button>
+              )}
+            </div>
             <input
               type="number"
               value={item.quantity}
@@ -216,13 +279,26 @@ export default function ShoppingCartPage() {
       {!data.isCompleted ? (
         <div className="mt-6">
           <div className="flex flex-wrap gap-2 items-center">
-            <input
-              type="text"
-              placeholder="Item name"
-              value={newItem.name}
-              onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
-              className="flex-1 border rounded px-2 py-1"
-            />
+            <div className="flex-1 relative flex items-center gap-2">
+              <input
+                type="text"
+                placeholder="Item name"
+                value={newItem.name}
+                onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+                className="flex-1 border rounded px-2 py-1"
+              />
+              <button
+                onClick={() => startListening('new')}
+                className={`absolute right-2 p-1 rounded-full cursor-pointer transition-colors ${
+                  isListening && activeInputIndex === 'new'
+                    ? 'bg-red-500 text-white animate-pulse'
+                    : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                }`}
+                title="הקלטה קולית"
+              >
+                🎤
+              </button>
+            </div>
             <input
               type="number"
               placeholder="Quantity"
