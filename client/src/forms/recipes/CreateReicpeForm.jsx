@@ -4,7 +4,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { useQueryClient } from '@tanstack/react-query';
 import {unitOptions} from "../../constants/index"
 
-const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitted:', formData) }) => {
+const CreateRecipeForm = ({ onSubmit = (formData) => console.log('המתכון נשלח:', formData) }) => {
 
   // Contexts
   const { householdInfo } = useContext(HouseholdContext);
@@ -14,17 +14,15 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
   const queryClient = useQueryClient();
 
   // States
-  const [linkHousehold, setLinkHousehold] = useState(false); // Changed from ref to state
+  const [linkHousehold, setLinkHousehold] = useState(false);
   const [values, setValues] = useState({
     recipeName: '',
     ingredients: [{ name: '', quantity: '', unit: '' }],
-    preparationSteps: [''], // Changed to array of strings
+    preparationSteps: [''],
     preparationTime: '', 
     image: null,
   });
   const [isSubmitting, setSubmitting] = useState(false);
-
-
 
   const setFieldValue = (field, value) => {
     setValues((prev) => ({ ...prev, [field]: value }));
@@ -43,8 +41,8 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
       invalidRequest = "householdRecipes";
     }
     
-    // Join preparation steps with newlines or send as array - depends on your backend
-    formData.append('preparationSteps', JSON.stringify(values.preparationSteps));    formData.append('preparationTime', values.preparationTime); 
+    formData.append('preparationSteps', JSON.stringify(values.preparationSteps));    
+    formData.append('preparationTime', values.preparationTime); 
     if (values.image) {
       formData.append('image', values.image); 
     }
@@ -57,7 +55,6 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
   
     try {
       onSubmit(formData);
-      // Reset form
       setValues({
         recipeName: '',
         ingredients: [{ name: '', quantity: '', unit: '' }],
@@ -68,7 +65,7 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
       setLinkHousehold(false);
       queryClient.invalidateQueries({ queryKey: [invalidRequest] });
     } catch (error) {
-      console.error('Failed to submit recipe:', error);
+      console.error('השליחה נכשלה:', error);
     } finally {
       setSubmitting(false);
     }
@@ -76,13 +73,13 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
 
   return (
     <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-xl">
-      <h2 className="text-4xl font-bold text-center mb-6 text-green-700">Create a Recipe</h2>
+      <h2 className="text-4xl font-bold text-center mb-6 text-green-700">צור מתכון</h2>
 
       <form className="space-y-6" onSubmit={handleSubmit} encType="multipart/form-data">
-        {/* Recipe Name */}
+        {/* שם המתכון */}
         <div>
           <label htmlFor="recipeName" className="block font-medium mb-1">
-            Recipe Name
+            שם המתכון
           </label>
           <input
             type="text"
@@ -94,16 +91,16 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
           />
         </div>
 
-        {/* Ingredients */}
+        {/* מרכיבים */}
         <div>
-          <label className="block font-medium mb-2">Ingredients</label>
+          <label className="block font-medium mb-2">מרכיבים</label>
           {values.ingredients.map((ingredient, index) => (
             <div key={index} className="mb-4 p-4 border border-gray-200 rounded-md">
               <div className="grid grid-cols-3 gap-3 mb-2">
-                {/* Ingredient Name */}
+                {/* שם המרכיב */}
                 <div>
                   <input
-                    placeholder="Name"
+                    placeholder="שם"
                     value={ingredient.name}
                     onChange={(e) => {
                       const newIngredients = [...values.ingredients];
@@ -115,10 +112,10 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
                   />
                 </div>
 
-                {/* Ingredient Quantity */}
+                {/* כמות */}
                 <div>
                   <input
-                    placeholder="Quantity"
+                    placeholder="כמות"
                     type="number"
                     value={ingredient.quantity}
                     onChange={(e) => {
@@ -131,7 +128,7 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
                   />
                 </div>
 
-                {/* Ingredient Unit */}
+                {/* יחידת מידה */}
                 <div>
                   <select
                     value={ingredient.unit}
@@ -142,7 +139,7 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
                     }}
                     className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="">Select Unit</option>
+                    <option value="">בחר יחידת מידה</option>
                     {unitOptions.map((unit) => (
                       <option key={unit} value={unit}>
                         {unit}
@@ -152,7 +149,7 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
                 </div>
               </div>
 
-              {/* Remove Button */}
+              {/* כפתור הסרה */}
               {values.ingredients.length > 1 && (
                 <button
                   type="button"
@@ -162,7 +159,7 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
                   }}
                   className="text-red-500 text-sm hover:text-red-700 transition"
                 >
-                  Remove Ingredient
+                  הסר מרכיב
                 </button>
               )}
             </div>
@@ -175,13 +172,13 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
             }}
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-md transition"
           >
-            Add Ingredient
+            הוסף מרכיב
           </button>
         </div>
 
-        {/* Preparation Steps */}
+        {/* שלבי הכנה */}
         <div>
-          <label className="block font-medium mb-2">Preparation Steps</label>
+          <label className="block font-medium mb-2">שלבי הכנה</label>
           {values.preparationSteps.map((step, index) => (
             <div key={index} className="mb-3">
               <div className="flex items-start gap-2">
@@ -189,7 +186,7 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
                 <div className="flex-1">
                   <input
                     type="text"
-                    placeholder={`Step ${index + 1}`}
+                    placeholder={`שלב ${index + 1}`}
                     value={step}
                     onChange={(e) => {
                       const newSteps = [...values.preparationSteps];
@@ -209,7 +206,7 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
                     }}
                     className="text-red-500 text-sm hover:text-red-700 transition mt-2"
                   >
-                    Remove
+                    הסר
                   </button>
                 )}
               </div>
@@ -223,14 +220,14 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
             }}
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-md transition"
           >
-            Add Step
+            הוסף שלב
           </button>
         </div>
 
-        {/* Preparation Time */}
+        {/* זמן הכנה */}
         <div>
           <label htmlFor="preparationTime" className="block font-medium mb-1">
-            Preparation Time (minutes)
+            זמן הכנה (בדקות)
           </label>
           <input
             type="number"
@@ -242,10 +239,10 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
           />
         </div>
 
-        {/* Image Upload */}
+        {/* תמונת המתכון */}
         <div>
           <label htmlFor="image" className="block font-medium mb-1">
-            Recipe Image
+            תמונת המתכון
           </label>
           <input
             type="file"
@@ -253,19 +250,19 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
             accept="image/*"
             onChange={(event) => {
               const file = event.currentTarget.files[0];
-              console.log("Selected File:", file);
+              console.log("הקובץ שנבחר:", file);
               setFieldValue('image', file);
             }}
             className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
-        {/* Link Household - Improved Toggle */}
+        {/* קישור למשפחה */}
         <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
           <div>
-            <span className="text-gray-700 font-medium block">Link to Household</span>
+            <span className="text-gray-700 font-medium block">קשר עם המשפחה</span>
             <span className="text-sm text-gray-500">
-              {linkHousehold ? "Recipe will be shared with household members" : "Recipe will be private"}
+              {linkHousehold ? "המתכון ישותף עם חברי המשפחה" : "המתכון יהיה פרטי"}
             </span>
           </div>
           <button
@@ -275,10 +272,10 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
             }`}
             onClick={() => {
               setLinkHousehold(!linkHousehold);
-              console.log("Link Household:", !linkHousehold);
+              console.log("קישור למשפחה:", !linkHousehold);
             }}
             aria-pressed={linkHousehold}
-            aria-label="Toggle household linking"
+            aria-label="החלף קישור למשפחה"
           >
             <span
               className={`inline-block h-4 w-4 rounded-full bg-white transition-transform duration-200 ${
@@ -288,14 +285,14 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
           </button>
         </div>
 
-        {/* Submit */}
+        {/* שלח */}
         <div className="text-center">
           <button
             type="submit"
             disabled={isSubmitting}
             className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-md transition disabled:opacity-50"
           >
-            {isSubmitting ? 'Submitting...' : 'Create Recipe'}
+            {isSubmitting ? 'שולח...' : 'צור מתכון'}
           </button>
         </div>
       </form>
@@ -303,4 +300,4 @@ const CreateRecipeForm = ({ onSubmit = (formData) => console.log('Recipe submitt
   );
 };
 
-export default CreateRecipeForm
+export default CreateRecipeForm;

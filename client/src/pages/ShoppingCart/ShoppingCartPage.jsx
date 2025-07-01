@@ -5,14 +5,13 @@ import { useState, useEffect, useContext } from "react";
 import { notifySuccess, notifyError } from "../../lib/Toasts";
 import { HouseholdContext } from "../../context/HouseholdContext";
 import { io } from "socket.io-client";
-import {unitOptions} from "../../constants/index"
+import { unitOptions } from "../../constants/index";
 
-
-// הגדרת הסוקט (רק פעם אחת)
+// הגדרת סוקט (רק פעם אחת)
 const socket = io("http://localhost:3000", { autoConnect: false });
 
 export default function ShoppingCartPage() {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const { cartId } = useParams();
   const navigate = useNavigate();
   const { householdInfo } = useContext(HouseholdContext);
@@ -30,18 +29,17 @@ export default function ShoppingCartPage() {
     socket.connect();
 
     socket.on("connect", () => {
-      console.log("Socket connected:", socket.id);
+      console.log("Socket מחובר:", socket.id);
       socket.emit("joinHousehold", householdInfo._id);
     });
 
     socket.on("cartNotification", (data) => {
       notifySuccess(data.message);
-      refetch()
+      refetch();
     });
 
     socket.on("cartDeleted", () => {
       navigate("/household/carts-active");
-
     });
 
     return () => {
@@ -49,11 +47,11 @@ export default function ShoppingCartPage() {
       socket.off("cartNotification");
       socket.off("cartDeleted");
     };
-  }, [householdInfo?._id, refetch]);
+  }, [householdInfo?._id, refetch, navigate]);
 
   useEffect(() => {
     if (error) {
-      notifyError("Cart not found");
+      notifyError("עגלה לא נמצאה");
       navigate("/household/carts");
     }
   }, [error, navigate]);
@@ -63,8 +61,8 @@ export default function ShoppingCartPage() {
   const [newItem, setNewItem] = useState({ name: "", quantity: "", unit: "" });
   const [addTotalPrice, setAddTotalPrice] = useState(false);
   const [totalPrice, setTotalPrice] = useState(0);
-  
-  // הוספת state להקלטה קולית
+
+  // מצב להקלטה קולית
   const [isListening, setIsListening] = useState(false);
   const [activeInputIndex, setActiveInputIndex] = useState(null);
 
@@ -81,31 +79,30 @@ export default function ShoppingCartPage() {
       await axios.put(`/shoppingCart/${cartId}/items`, { cartItems: items });
     },
     onSuccess: () => {
-      notifySuccess("Changes saved");
+      notifySuccess("השינויים נשמרו");
       socket.emit("cartUpdated", {
         householdId: householdInfo._id,
         cartId,
       });
     },
-    onError: () => notifyError("Failed to save"),
+    onError: () => notifyError("שמירה נכשלה"),
   });
 
   const deleteCart = useMutation({
-    mutationKey:["deleteCart"],
+    mutationKey: ["deleteCart"],
     mutationFn: async () => {
       await axios.delete(`/shoppingCart/${householdInfo._id}/${cartId}`);
     },
     onSuccess: () => {
-      notifySuccess("Cart deleted");
+      notifySuccess("העגלה נמחקה");
       socket.emit("cartDeleted", {
         householdId: householdInfo._id,
         cartId,
       });
-      queryClient.invalidateQueries({queryKey: ["getAllShoppingCartsByHouseholdId"]})
+      queryClient.invalidateQueries({ queryKey: ["getAllShoppingCartsByHouseholdId"] });
       navigate("/household/carts-active");
-      
     },
-    onError: () => notifyError("Failed to delete cart"),
+    onError: () => notifyError("מחיקה נכשלה"),
   });
 
   const { mutate: markAsCompleted } = useMutation({
@@ -114,10 +111,10 @@ export default function ShoppingCartPage() {
       await axios.put(`/shoppingCart/${cartId}/completed`, { cartTotalPrice: totalPrice });
     },
     onSuccess: () => {
-      notifySuccess("Cart completed");
+      notifySuccess("העגלה סומנה כהושלמה");
       navigate("/household/carts-active");
     },
-    onError: () => notifyError("Completed cart failed"),
+    onError: () => notifyError("סימון כהושלמה נכשל"),
   });
 
   const handleAddItem = () => {
@@ -132,55 +129,55 @@ export default function ShoppingCartPage() {
 
   const handleChangeItem = (index, field, value) => {
     const updated = [...items];
-    updated[index][field] = field === "completed" ? value : value;
+    updated[index][field] = value;
     setItems(updated);
   };
 
-  // פונקציה להפעלת הקלטה קולית
+  // הפעלת הקלטה קולית
   const startListening = (inputIndex) => {
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      notifyError("Speech recognition is not supported in this browser");
+    if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
+      notifyError("הדפדפן אינו תומך בהקלטה קולית");
       return;
     }
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
-    
-    recognition.lang = 'he-IL'; // עברית
+
+    recognition.lang = "he-IL"; // עברית
     recognition.continuous = false;
     recognition.interimResults = false;
-    
+
     setIsListening(true);
     setActiveInputIndex(inputIndex);
-    
+
     recognition.onstart = () => {
-      notifySuccess("התחלת הקלטה...");
+      notifySuccess("הקלטה התחילה...");
     };
-    
+
     recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
-      
-      if (inputIndex === 'new') {
-        setNewItem(prev => ({ ...prev, name: transcript }));
+
+      if (inputIndex === "new") {
+        setNewItem((prev) => ({ ...prev, name: transcript }));
       } else {
         handleChangeItem(inputIndex, "name", transcript);
       }
     };
-    
+
     recognition.onerror = (event) => {
-      console.error('Speech recognition error:', event.error);
-      notifyError("שגיאה בהקלטה קולית");
+      console.error("שגיאה בהקלטה קולית:", event.error);
+      notifyError("אירעה שגיאה בהקלטה הקולית");
     };
-    
+
     recognition.onend = () => {
       setIsListening(false);
       setActiveInputIndex(null);
     };
-    
+
     recognition.start();
   };
 
-  if (isLoading || !data) return <div>Loading...</div>;
+  if (isLoading || !data) return <div>טוען...</div>;
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
@@ -193,13 +190,13 @@ export default function ShoppingCartPage() {
               onClick={() => saveChangesMutation.mutate()}
               className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
             >
-              Save
+              שמור
             </button>
             <button
               onClick={() => deleteCart.mutate()}
               className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
             >
-              Delete Cart
+              מחק עגלה
             </button>
           </div>
         )}
@@ -224,8 +221,8 @@ export default function ShoppingCartPage() {
                   onClick={() => startListening(index)}
                   className={`p-2 rounded-full transition-colors ${
                     isListening && activeInputIndex === index
-                      ? 'bg-red-500 text-white animate-pulse'
-                      : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                      ? "bg-red-500 text-white animate-pulse"
+                      : "bg-gray-200 hover:bg-gray-300 text-gray-700"
                   }`}
                   title="הקלטה קולית"
                 >
@@ -246,7 +243,7 @@ export default function ShoppingCartPage() {
               className="w-32 border rounded px-2 py-1 min-w-[120px]"
               disabled={data.isCompleted}
             >
-              <option value="">unit</option>
+              <option value="">יחידה</option>
               {unitOptions.map((unit, idx) => (
                 <option key={idx} value={unit}>
                   {unit}
@@ -262,7 +259,7 @@ export default function ShoppingCartPage() {
                 }
                 disabled={data.isCompleted}
               />
-              Completed
+              הושלם
             </label>
             {!data.isCompleted && (
               <button
@@ -282,17 +279,17 @@ export default function ShoppingCartPage() {
             <div className="flex-1 relative flex items-center gap-2">
               <input
                 type="text"
-                placeholder="Item name"
+                placeholder="שם פריט"
                 value={newItem.name}
                 onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
                 className="flex-1 border rounded px-2 py-1"
               />
               <button
-                onClick={() => startListening('new')}
+                onClick={() => startListening("new")}
                 className={`absolute right-2 p-1 rounded-full cursor-pointer transition-colors ${
-                  isListening && activeInputIndex === 'new'
-                    ? 'bg-red-500 text-white animate-pulse'
-                    : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                  isListening && activeInputIndex === "new"
+                    ? "bg-red-500 text-white animate-pulse"
+                    : "bg-gray-200 hover:bg-gray-300 text-gray-700"
                 }`}
                 title="הקלטה קולית"
               >
@@ -301,7 +298,7 @@ export default function ShoppingCartPage() {
             </div>
             <input
               type="number"
-              placeholder="Quantity"
+              placeholder="כמות"
               value={newItem.quantity}
               onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
               className="w-20 border rounded px-2 py-1"
@@ -311,7 +308,7 @@ export default function ShoppingCartPage() {
               onChange={(e) => setNewItem({ ...newItem, unit: e.target.value })}
               className="w-32 border rounded px-2 py-1 min-w-[120px]"
             >
-              <option value="">Unit</option>
+              <option value="">יחידה</option>
               {unitOptions.map((unit, idx) => (
                 <option key={idx} value={unit}>
                   {unit}
@@ -322,14 +319,14 @@ export default function ShoppingCartPage() {
               onClick={handleAddItem}
               className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg"
             >
-              Add Item
+              הוסף פריט
             </button>
           </div>
           <button
             className="bg-green-600 cursor-pointer rounded-lg p-2 text-white mt-4"
             onClick={() => setAddTotalPrice(!addTotalPrice)}
           >
-            Mark as completed
+            סמן כהושלמה
           </button>
           {addTotalPrice && (
             <div className="flex justify-start items-center gap-5 mt-3">
@@ -339,12 +336,13 @@ export default function ShoppingCartPage() {
                 name="totalPrice"
                 id="totalPrice"
                 onChange={(e) => setTotalPrice(e.target.value)}
+                placeholder="מחיר כולל"
               />
               <button
                 className="bg-green-600 cursor-pointer rounded-lg p-2 text-white"
                 onClick={markAsCompleted}
               >
-                Save Total Price
+                שמור מחיר כולל
               </button>
             </div>
           )}
@@ -352,7 +350,7 @@ export default function ShoppingCartPage() {
       ) : (
         <div className="mt-6">
           <h2 className="text-xl font-bold text-green-600">
-            Total Price: ${totalPrice}
+            מחיר כולל: ₪{totalPrice}
           </h2>
         </div>
       )}

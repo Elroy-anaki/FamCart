@@ -18,14 +18,13 @@ export default function CreateNewHousehold(){
         try {
             const {data} = await axios.post("/households", newHousehold)
             console.log(data)
-            notifySuccess(`Create a new houshold. Join code is ${data.data.householdJoinCode}`)
+            notifySuccess("משק בית נוצר בהצלחה")
             queryClient.invalidateQueries({queryKey: ["verifyToken", "getHouseholdInfo" ]})
-
             navigate("/household")
 
         } catch (error) {
             console.log(error)
-            notifyError("Failed creating a new household")
+            notifyError("יצירת משק בית נכשלה")
         }
 
         

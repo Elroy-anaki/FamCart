@@ -6,17 +6,15 @@ import { HouseholdContext } from "../../context/HouseholdContext";
 import { notifyError, notifySuccess } from "../../lib/Toasts";
 import { AuthContext } from "../../context/AuthContext";
 
-
 export function HouseholdMembers({ members, owner }) {
 
-    // Contexts
+    // הקונקטסטים
     const { householdInfo } = useContext(HouseholdContext)
     const { user } = useContext(AuthContext)
 
-    // Hooks
+    // שאילתות
     const queryClient = useQueryClient()
 
-    // Queries
     const { mutate: deleteMember } = useMutation({
         mutationKey: ["deleteMember"],
         mutationFn: async (memberId) => {
@@ -24,10 +22,10 @@ export function HouseholdMembers({ members, owner }) {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["getHouseholdInfo"] })
-            notifySuccess("Deleted member succesfully")
+            notifySuccess("החבר נמחק בהצלחה")
         },
         onError: () => {
-            notifyError("Deleting member failed")
+            notifyError("מחיקת החבר נכשלה")
         }
     })
 
@@ -35,31 +33,30 @@ export function HouseholdMembers({ members, owner }) {
         mutationKey: ["leaveHousehold"],
         mutationFn: async () => await axios.delete(`/households/leave/${householdInfo._id}/${user._id}`),
         onSuccess: () => {
-            notifySuccess("Bye Bye...")
+            notifySuccess("להתראות...")
             queryClient.invalidateQueries({ queryKey: ["getHouseholdInfo"] })
         },
         onError: () => {
-            notifyError("Leaving household failed")
-
+            notifyError("היציאה מהמשק נכשלה")
         }
     })
-    const {mutate: householdDispersion} = useMutation({
-        mutationKey:["householdDispersion"],
+
+    const { mutate: householdDispersion } = useMutation({
+        mutationKey: ["householdDispersion"],
         mutationFn: async () => await axios.delete(`/households/dispersion/${householdInfo._id}`),
         onSuccess: () => {
-            notifySuccess("Household Dispersion succeeded")
+            notifySuccess("פיזור המשק בוצע בהצלחה")
             queryClient.invalidateQueries({ queryKey: ["getHouseholdInfo"] })
         },
         onError: () => {
-            notifyError("Household Dispersion failed")
-
+            notifyError("פיזור המשק נכשל")
         }
     })
 
     return (
         <div className="bg-gradient-to-b from-blue-50 to-green-50 p-6 rounded-xl shadow-lg w-full mx-auto">
 
-            <h2 className="text-2xl font-bold text-center text-green-800 mb-4">Members</h2>
+            <h2 className="text-2xl font-bold text-center text-green-800 mb-4">חברי המשק</h2>
             <div className="flex flex-col gap-3">
                 {members?.map((member) => {
                     const isOwner = member._id === owner._id;
@@ -75,7 +72,7 @@ export function HouseholdMembers({ members, owner }) {
                             <p className="text-lg font-medium">{member.userName}</p>
                             <div className="flex items-center gap-2">
                                 {isOwner && (
-                                    <p className="text-sm text-blue-200 font-semibold">Owner</p>
+                                    <p className="text-sm text-blue-200 font-semibold">בעלים</p>
                                 )}
                                 {isUserOwner && isMemberNotOwner && (
                                     <button onClick={() => deleteMember(member._id)} className="cursor-pointer rounded-lg p-2 hover:bg-white">
@@ -86,8 +83,15 @@ export function HouseholdMembers({ members, owner }) {
                         </div>
                     );
                 })}
-                {user?._id !== owner?._id ? (<button onClick={leaveHousehold} className="bg-red-600  p-3 cursor-pointer text-center hover:bg-red-500 rounded-lg text-white shadow-md transition-all duration-200 ">Leave</button>)
-                    : (<button onClick={householdDispersion} className="bg-red-600  p-3 cursor-pointer text-center hover:bg-red-500 rounded-lg text-white shadow-md transition-all duration-200 ">Disperation</button>)}
+                {user?._id !== owner?._id ? (
+                    <button onClick={leaveHousehold} className="bg-red-600 p-3 cursor-pointer text-center hover:bg-red-500 rounded-lg text-white shadow-md transition-all duration-200">
+                        עזוב את המשק
+                    </button>
+                ) : (
+                    <button onClick={householdDispersion} className="bg-red-600 p-3 cursor-pointer text-center hover:bg-red-500 rounded-lg text-white shadow-md transition-all duration-200">
+                        פזר את המשק
+                    </button>
+                )}
             </div>
         </div>
     );

@@ -1,4 +1,3 @@
-
 import { useContext, useState } from "react";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { HouseholdContext } from "../../context/HouseholdContext";
@@ -49,22 +48,22 @@ export function HouseholdShoppingDays({ shoppingDays }) {
             (await axios.put(`/households/updateDays/${householdInfo._id}`, { days: updatedShoppingDays })).data
         ),
         onSuccess: () => {
-            notifySuccess("Update days successfully");
+            notifySuccess("הימים עודכנו בהצלחה");
             queryClient.invalidateQueries({ queryKey: ['getHouseholdInfo'] });
             setIsSaveOpen(false);
         },
         onError: () => {
-            notifyError("Update days failed");
+            notifyError("עדכון הימים נכשל");
         }
     });
 
     return (
         <div className="flex flex-col gap-4">
-             {updatedShoppingDays.includes(currentDay) && (
-      <p className="text-green-600 font-semibold text-lg">Today is a shopping day</p>
-    )}
+            {updatedShoppingDays.includes(currentDay) && (
+                <p className="text-green-600 font-semibold text-lg">היום הוא יום קניות</p>
+            )}
             <div className="flex flex-wrap gap-3 bg-slate-100 rounded-xl px-4 py-4">
-            
+
                 {updatedShoppingDays.map((day) => (
                     <div
                         key={day}
@@ -82,7 +81,7 @@ export function HouseholdShoppingDays({ shoppingDays }) {
                 ))}
 
                 <select onChange={handleAddDay} className="rounded-md px-2 py-1 bg-white">
-                    <option value="">Add day</option>
+                    <option value="">הוסף יום</option>
                     {availableDays.map((day) => (
                         <option key={day} value={day}>{day}</option>
                     ))}
@@ -91,10 +90,10 @@ export function HouseholdShoppingDays({ shoppingDays }) {
                 {isSaveOpen && (
                     <div className="flex justify-center gap-3 mt-2">
                         <button onClick={updateDays} className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl">
-                            Save
+                            שמור
                         </button>
                         <button onClick={resetDaysAsDB} className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-xl">
-                            Reset
+                            אפס
                         </button>
                     </div>
                 )}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import {createHouseholdSchema} from "../../../schemas/householdSchemas"
+import { allDays } from '../../../constants';
 
 // Days of the week excluding Saturday
 const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
@@ -9,7 +10,7 @@ const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Fri
 const HouseholdForm = ({ onSubmit }) => {
   return (
     <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-xl">
-      <h2 className="text-4xl font-bold text-center mb-6 text-green-700">Create a Household</h2>
+      <h2 className="text-4xl font-bold text-center mb-6 text-green-700">צור משק בית</h2>
       <Formik
         initialValues={{ householdName: '', householdBudget: '', householdShoppingDays: [] }}
         validationSchema={createHouseholdSchema}
@@ -23,7 +24,7 @@ const HouseholdForm = ({ onSubmit }) => {
           <Form className="space-y-6">
             {/* Household Name */}
             <div>
-              <label htmlFor="householdName" className="block font-medium mb-1">Household Name</label>
+              <label htmlFor="householdName" className="block font-medium mb-1">שם משק הבית</label>
               <Field
                 type="text"
                 name="householdName"
@@ -34,7 +35,7 @@ const HouseholdForm = ({ onSubmit }) => {
 
             {/* Household Budget */}
             <div>
-              <label htmlFor="householdBudget" className="block font-medium mb-1">Household Budget</label>
+              <label htmlFor="householdBudget" className="block font-medium mb-1">תקציב משק הבית</label>
               <Field
                 type="number"
                 name="householdBudget"
@@ -45,9 +46,9 @@ const HouseholdForm = ({ onSubmit }) => {
 
             {/* Shopping Days */}
             <div>
-              <label className="block font-medium mb-2">Shopping Days</label>
+              <label className="block font-medium mb-2">ימי קניות</label>
               <div className="grid grid-cols-2 gap-3">
-                {daysOfWeek.map(day => (
+                {allDays.map(day => (
                   <label key={day} className="flex items-center space-x-2">
                     <Field
                       type="checkbox"
@@ -69,7 +70,7 @@ const HouseholdForm = ({ onSubmit }) => {
                 disabled={isSubmitting}
                 className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-md transition"
               >
-                Submit
+                צור משק בית
               </button>
             </div>
           </Form>

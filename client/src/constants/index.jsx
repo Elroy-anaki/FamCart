@@ -1,18 +1,26 @@
 export const unitOptions = [
-    "cup",
-    "gram",
-    "kilogram",
-    "liter",
-    "milliliter",
-    "piece",
-    "pack",
-    "box",
-    "dozen",
-    "tablespoon",
-    "teaspoon",
-    "slice",
-    "bag",
-    "bottle",
-  ];
+  "כוס",
+  "גרם",
+  "קילוגרם",
+  "ליטר",
+  "מיליליטר",
+  "יחידה",
+  "חבילה",
+  "קופסה",
+  "תריסר",
+  "כף",
+  "כפית",
+  "פרוסה",
+  "שקית",
+  "בקבוק",
+];
 
-export const allDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+export const allDays = [
+  "ראשון",
+  "שני",
+  "שלישי",
+  "רביעי",
+  "חמישי",
+  "שישי",
+  "שבת",
+];

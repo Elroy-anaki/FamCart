@@ -23,7 +23,7 @@ function SingUp() {
     };
 
     await signUpGoogle(signUpValues);
-    console.log("Sign-up successful");
+    console.log("הרשמה בוצעה בהצלחה");
   }
 
   return (
@@ -49,10 +49,10 @@ function SingUp() {
           >
             <div className="mb-6 md:mb-12 text-center">
               <h3 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-green-600 to-green-600 bg-clip-text text-transparent">
-                Welcome to FamCat!
+                ברוכים הבאים ל-FamCat!
               </h3>
               <p className="text-black mt-2 md:mt-5 text-base md:text-lg">
-                Thanks for you decided to join us 🥳
+                תודה שהחלטת להצטרף אלינו 🥳
               </p>
             </div>
 
@@ -62,9 +62,9 @@ function SingUp() {
                 name="userName"
                 id="userName"
                 value={values.userName}
-                placeholder="Enter your name"
+                placeholder="הכנס את שמך"
                 required=""
-                label={"Full Name"}
+                label={"שם מלא"}
                 onBlur={handleBlur}
                 onChange={handleChange}
                 Icon={FaUser}
@@ -75,9 +75,9 @@ function SingUp() {
                 name="userEmail"
                 id="userEmail"
                 value={values.userEmail}
-                placeholder="Enter your email"
+                placeholder="הכנס את האימייל שלך"
                 required=""
-                label={"Email Address"}
+                label={"כתובת אימייל"}
                 onBlur={handleBlur}
                 onChange={handleChange}
                 Icon={FaEnvelope}
@@ -88,9 +88,9 @@ function SingUp() {
                 name="userPassword"
                 id="userPassword"
                 value={values.userPassword}
-                placeholder="Create a password"
+                placeholder="צור סיסמה"
                 required=""
-                label={"Password"}
+                label={"סיסמה"}
                 onBlur={handleBlur}
                 onChange={handleChange}
                 Icon={FaLock}
@@ -110,7 +110,7 @@ function SingUp() {
                       : "bg-gradient-to-r from-green-500 to-green-500 hover:from-green-600 hover:to-green-600 focus:outline-none focus:ring-2 focus:ring-green-300 transform transition-all hover:scale-[1.02]"
                   }`}
               >
-                {isSubmitting ? "Creating Account..." : "Join Now"}
+                {isSubmitting ? "יוצר חשבון..." : "הצטרף עכשיו"}
               </button>
               
               <div className="w-full flex justify-center py-2 md:py-3">
@@ -119,7 +119,7 @@ function SingUp() {
                     signUpWithGoogle(jwtDecode(credentialResponse.credential));
                     navigate("/auth/sign-in");
                   }}
-                  onError={() => console.log("Login failed")}
+                  onError={() => console.log("הכניסה נכשלה")}
                   auto_select={true}
                   size="large"
                   shape="circle"
@@ -129,12 +129,12 @@ function SingUp() {
               </div>
 
               <p className="text-center text-gray-600 text-xs md:text-sm mt-2">
-                Already have an account?{" "}
+                כבר יש לך חשבון?{" "}
                 <Link
                   to={"/auth/sign-in"}
                   className="text-green-500 font-semibold hover:text-green-600"
                 >
-                  Sign in
+                  התחבר כאן
                 </Link>
               </p>
             </div>

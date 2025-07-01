@@ -1,13 +1,12 @@
 import * as Yup from 'yup';
 
-
 export const createHouseholdSchema = Yup.object().shape({
   householdName: Yup.string()
-    .required('Household name is required'),
+    .required('שם המשפחה/בית הוא שדה חובה'),
   householdBudget: Yup.number()
-    .typeError('Budget must be a number')
-    .positive('Budget must be a positive number')
-    .required('Household budget is required'),
-    householdShoppingDays: Yup.array()
-    .min(1, 'Select at least one shopping day'),
+    .typeError('התקציב חייב להיות מספר')
+    .positive('התקציב חייב להיות מספר חיובי')
+    .required('התקציב הוא שדה חובה'),
+  householdShoppingDays: Yup.array()
+    .min(1, 'בחר לפחות יום קנייה אחד'),
 });

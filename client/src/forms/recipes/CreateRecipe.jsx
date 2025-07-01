@@ -18,12 +18,12 @@ const CreateRecipe = () => {
         headers: { 'Content-Type': 'multipart/form-data' },
       }),
     onSuccess: (data) => {
-      notifySuccess('Recipe created successfully!');
+      notifySuccess('נוצר מתכון בהצלחה');
       navigate("/household/recipes")
       console.log('Recipe created:', data);
     },
     onError: (error) => {
-      notifyError('Failed to create recipe.');
+      notifyError('יצירת מתכון נכשלה.');
       console.error('Error creating recipe:', error.response?.data || error.message);
     },
   });

@@ -71,7 +71,7 @@ function NavBar() {
                            rounded-lg"
                 onClick={closeDropdown}
               >
-                Household
+                משק הבית
               </Link>
             </li>
 
@@ -85,7 +85,7 @@ function NavBar() {
                            hover:bg-white
                            rounded-lg"
               >
-                Shopping Carts
+                עגלות קניה
               </button>
               {isDropdownOpen.carts && (
                 <ul className="absolute left-0 mt-2 bg-white shadow-lg rounded-lg w-40">
@@ -95,7 +95,7 @@ function NavBar() {
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={closeDropdown}
                     >
-                      Active Carts
+                      עגלות פעילות
                     </Link>
                   </li>
                   <li>
@@ -104,7 +104,7 @@ function NavBar() {
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={closeDropdown}
                     >
-                      History
+                      היסטוריית עגלות
                     </Link>
                   </li>
                 </ul>
@@ -121,7 +121,7 @@ function NavBar() {
                            hover:bg-white
                            rounded-lg"
               >
-                Recipes
+                מתכונים
               </button>
               {isDropdownOpen.recipes && (
                 <ul className="absolute left-0 mt-2 bg-white shadow-lg rounded-lg w-40">
@@ -131,7 +131,7 @@ function NavBar() {
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={closeDropdown}
                     >
-                      Create
+                      יצירת מתכון
                     </Link>
                   </li>
                   <li>
@@ -140,7 +140,7 @@ function NavBar() {
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={closeDropdown}
                     >
-                      All Recipes
+                      כל המתכונים
                     </Link>
                   </li>
                 </ul>
@@ -157,7 +157,7 @@ function NavBar() {
                            rounded-lg"
                 onClick={closeDropdown}
               >
-                Profile
+                פרופיל
               </Link>
             </li>
           </ul>
@@ -181,7 +181,7 @@ function NavBar() {
                 onClick={handleSignOut}
                 className="hover:text-white flex gap-2 justify-center items-center font-semibold"
               >
-                Sign Out
+                יציאה
                 <PiSignOut size={20} />
               </button>
             ) : (
@@ -193,7 +193,7 @@ function NavBar() {
                            font-semibold 
                            transition-colors"
                 >
-                  Sign Up
+                  הרשמה
                 </Link>
                 <Link
                   to="/auth/sign-in"
@@ -201,7 +201,7 @@ function NavBar() {
                              font-semibold 
                              transition-colors"
                 >
-                  Sign In
+                 התחברות
                 </Link>
               </>
             )}
@@ -222,7 +222,7 @@ function NavBar() {
             aria-controls="navbar-sticky"
             aria-expanded={isMenuOpen}
           >
-            <span className="sr-only">Open main menu</span>
+            <span className="sr-only">פתח</span>
             <svg
               className="w-6 h-6"
               xmlns="http://www.w3.org/2000/svg"
@@ -255,7 +255,7 @@ function NavBar() {
                            rounded-lg"
                 onClick={handleLinkClick}
               >
-                Household
+                משק הבית
               </Link>
             </li>
             <li>
@@ -267,7 +267,7 @@ function NavBar() {
                            hover:bg-white
                            rounded-lg"
               >
-                Shopping Carts
+                עגלות קנייה
               </button>
               {isDropdownOpen.carts && (
                 <ul className="bg-white shadow-lg rounded-lg w-40 mt-2">
@@ -277,7 +277,7 @@ function NavBar() {
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={handleLinkClick}
                     >
-                      Active Carts
+                      עגלות פעילות
                     </Link>
                   </li>
                   <li>
@@ -286,7 +286,7 @@ function NavBar() {
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={handleLinkClick}
                     >
-                      History
+                      היסטוריית עגלות
                     </Link>
                   </li>
                 </ul>
@@ -301,7 +301,7 @@ function NavBar() {
                            hover:bg-white
                            rounded-lg"
               >
-                Recipes
+                מתכונים
               </button>
               {isDropdownOpen.recipes && (
                 <ul className="bg-white shadow-lg rounded-lg w-40 mt-2">
@@ -311,7 +311,7 @@ function NavBar() {
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={handleLinkClick}
                     >
-                      Create
+                      יצירת מתכון
                     </Link>
                   </li>
                   <li>
@@ -320,7 +320,7 @@ function NavBar() {
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={handleLinkClick}
                     >
-                      All Recipes
+                      כל המתכונים
                     </Link>
                   </li>
                 </ul>
@@ -336,7 +336,7 @@ function NavBar() {
                            rounded-lg"
                 onClick={handleLinkClick}
               >
-                Profile
+                פרופיל
               </Link>
             </li>
             
@@ -352,7 +352,7 @@ function NavBar() {
                              rounded-lg
                              w-full"
                 >
-                  Sign Out
+                  יציאה
                   <PiSignOut size={20} />
                 </button>
               </li>

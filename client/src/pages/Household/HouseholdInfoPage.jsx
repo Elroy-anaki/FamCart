@@ -43,8 +43,7 @@ export default function HouseholdInfoPage() {
         })
       ).data,
     onSuccess: () => {
-      notifySuccess("Update budget successful!");
-      // Invalidate both household info and expenses queries
+      notifySuccess("תקציב עודכן בהצלחה!");
       queryClient.invalidateQueries({ queryKey: ["getHouseholdInfo"] });
       queryClient.invalidateQueries({ queryKey: ["getTotalExpensesPerCurrentMonth"] });
       setIsEditing(false);
@@ -52,7 +51,7 @@ export default function HouseholdInfoPage() {
     },
     onError: (error) => {
       console.log(error);
-      notifyError("Update failed!");
+      notifyError("עדכון התקציב נכשל!");
     },
   });
 
@@ -61,12 +60,12 @@ export default function HouseholdInfoPage() {
     mutationFn: async () =>
       (await axios.put(`/households/change-join-code/${householdInfo._id}`)).data,
     onSuccess: () => {
-      notifySuccess("Join code updated!");
+      notifySuccess("קוד ההצטרפות עודכן!");
       queryClient.invalidateQueries({ queryKey: ["getHouseholdInfo"] });
     },
     onError: (error) => {
       console.log(error);
-      notifyError("Join code update failed!");
+      notifyError("עדכון קוד ההצטרפות נכשל!");
     },
   });
 
@@ -88,7 +87,7 @@ export default function HouseholdInfoPage() {
     },
     enabled: !!householdInfo?._id,
     refetchOnWindowFocus: false,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000, // 5 דקות
   }); 
   
   const totalPrice = totalData || 0;
@@ -97,19 +96,19 @@ export default function HouseholdInfoPage() {
 
   return (
     <div className="p-4 md:p-6 max-w-4xl mx-auto space-y-4">
-      {/* Page Header */}
+      {/* כותרת הדף */}
       <div className="mb-8 text-center">
         <h1 className="text-3xl md:text-4xl font-bold text-green-600">
-          Welcome to {householdInfo?.householdName} Household
+          ברוכים הבאים למשפחת {householdInfo?.householdName}
         </h1>
       </div>
 
       <ShoppingCartsInfo />
 
-      {/* Expenses Status */}
+      {/* מצב הוצאות */}
       {isLoadingExpenses ? (
         <div className="rounded-xl p-4 bg-gray-300 text-gray-600 font-semibold text-lg text-center">
-          Loading expenses...
+          טוען הוצאות...
         </div>
       ) : (
         <div
@@ -117,16 +116,16 @@ export default function HouseholdInfoPage() {
             isOverBudget ? "bg-red-500" : "bg-green-500"
           }`}
         >
-          Total Expenses This Month: ${totalPrice.toFixed(2)} —{" "}
-          {isOverBudget ? "Over Budget" : "Within Budget"}
+          סה"כ הוצאות החודש: ₪{totalPrice.toFixed(2)} —{" "}
+          {isOverBudget ? "מעל התקציב" : "בתוך התקציב"}
         </div>
       )}
 
-      {/* Budget and Join Code Section */}
+      {/* תקציב וקוד הצטרפות */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        {/* Budget Box */}
+        {/* תיבת תקציב */}
         <div className="flex gap-3 items-center rounded-2xl text-white p-4 bg-green-600 w-full md:w-1/2">
-          <h3 className="text-xl">Budget</h3>
+          <h3 className="text-xl">תקציב</h3>
           {isEditing ? (
             <>
               <input
@@ -140,13 +139,13 @@ export default function HouseholdInfoPage() {
                 onClick={() => updateBudget()}
                 className="bg-white text-green-600 font-semibold px-3 py-1 rounded hover:bg-green-100"
               >
-                Save
+                שמור
               </button>
               <button
                 onClick={handleCancel}
                 className="bg-red-500 text-white font-semibold px-3 py-1 rounded hover:bg-red-600"
               >
-                Cancel
+                בטל
               </button>
             </>
           ) : (
@@ -154,30 +153,30 @@ export default function HouseholdInfoPage() {
               className="text-lg text-blue-800 cursor-pointer hover:underline"
               onClick={handleEditClick}
             >
-              ${budget}
+              ₪{budget}
             </p>
           )}
         </div>
 
-        {/* Join Code Box */}
+        {/* תיבת קוד הצטרפות */}
         <div className="flex gap-3 items-center rounded-2xl text-white p-4 bg-green-600 w-full md:w-1/2">
-          <h3 className="text-xl">Join Code</h3>
+          <h3 className="text-xl">קוד הצטרפות</h3>
           <p className="text-lg text-blue-800">{householdInfo?.householdJoinCode}</p>
           <button
             onClick={changeJoinCode}
             className="bg-white text-green-600 font-semibold px-3 py-1 rounded hover:bg-green-100"
           >
-            Reset Code
+            אפס קוד
           </button>
         </div>
       </div>
 
-      {/* Shopping Days */}
+      {/* ימי קניות */}
       <div className="w-full">
         <HouseholdShoppingDays shoppingDays={householdInfo?.householdShoppingDays} />
       </div>
 
-      {/* Members */}
+      {/* חברים */}
       <div className="w-full">
         <HouseholdMembers
           members={householdInfo?.householdMembers}

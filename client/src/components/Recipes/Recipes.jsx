@@ -1,4 +1,3 @@
-
 import React, { useContext, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -17,7 +16,7 @@ const Recipes = () => {
   // States
   const [activeView, setActiveView] = useState('household'); 
 
-  // Quereis - for fetch all recipes (private and public)
+  // Queries - for fetch all recipes (private and public)
   const { 
     data: householdRecipesData, 
     isLoading: isLoadingHousehold,
@@ -29,7 +28,7 @@ const Recipes = () => {
       return response.data;
     },
     enabled: !!householdInfo?._id && activeView === 'household',
-    onError: () => notifyError('Failed fetching household recipes'),
+    onError: () => notifyError('טעינת המתכונים של המשק נכשלה'),
   });
 
   const { 
@@ -43,10 +42,10 @@ const Recipes = () => {
       return response.data;
     },
     enabled: !!user?._id && activeView === 'my',
-    onError: () => notifyError('Failed fetching my recipes'),
+    onError: () => notifyError('טעינת המתכונים האישיים נכשלה'),
   });
 
-  // קביעת הנתונים הנוכחיים
+  // Determine current recipes based on active view
   const currentRecipes = activeView === 'household' 
     ? householdRecipesData?.data || [] 
     : myRecipesData?.data || [];
@@ -61,7 +60,7 @@ const Recipes = () => {
           to="/household/recipes/create-new"
           className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
         >
-          Add Recipe
+          הוסף מתכון
         </Link>
         <button
           onClick={() => setActiveView('household')}
@@ -71,7 +70,7 @@ const Recipes = () => {
               : 'bg-green-600 text-white hover:bg-green-700'
           }`}
         >
-          Household Recipes
+          מתכוני המשק
         </button>
         <button
           onClick={() => setActiveView('my')}
@@ -81,43 +80,43 @@ const Recipes = () => {
               : 'bg-purple-600 text-white hover:bg-purple-700'
           }`}
         >
-          My Recipes
+          המתכונים שלי
         </button>
       </div>
 
       {/* Loading State */}
       {isLoading && (
         <div className="text-center text-gray-500 py-8">
-          Loading recipes...
+          טוען מתכונים...
         </div>
       )}
 
       {/* Error State */}
       {(householdError || myError) && (
         <div className="text-center text-red-500 py-8">
-          Failed to load recipes. Please try again.
+          שגיאה בטעינת המתכונים. נסה שוב.
         </div>
       )}
 
       {/* Empty State */}
       {!isLoading && currentRecipes.length === 0 && (
         <div className="text-center text-gray-500 py-8">
-          No recipes found. {activeView === 'household' ? 'Add some recipes to your household!' : 'Create your first recipe!'}
+          לא נמצאו מתכונים. {activeView === 'household' ? 'הוסף מתכונים למשק שלך!' : 'צור את המתכון הראשון שלך!'}
         </div>
       )}
 
       {/* Recipes Grid */}
-{!isLoading && currentRecipes.length > 0 && (
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full max-w-5xl">
-    {currentRecipes.map((recipe) => (
-      <Recipe
-        key={recipe._id}
-        recipe={recipe}
-        className="p-4 border rounded-md shadow-sm hover:shadow-md transition transform hover:scale-105"
-      />
-    ))}
-  </div>
-)}
+      {!isLoading && currentRecipes.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full max-w-5xl">
+          {currentRecipes.map((recipe) => (
+            <Recipe
+              key={recipe._id}
+              recipe={recipe}
+              className="p-4 border rounded-md shadow-sm hover:shadow-md transition transform hover:scale-105"
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

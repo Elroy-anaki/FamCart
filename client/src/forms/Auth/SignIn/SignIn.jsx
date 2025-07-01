@@ -29,7 +29,7 @@ function SignIn() {
         className="w-full max-h-64 object-cover rounded-lg shadow-md mb-6"
       /> */}
 
-      {/* 📝 Sign-in Form */}
+      {/* 📝 טופס התחברות */}
       <Formik
         initialValues={initialUserValues}
         validationSchema={validationSignInSchema}
@@ -38,11 +38,11 @@ function SignIn() {
             await signIn(values);
             actions.resetForm();
             await getHouseholdInfo();
-            notifySuccess("Welcome!");
+            notifySuccess("ברוך הבא!");
             navigate("/");
           } catch (error) {
             console.log(error);
-            notifyError("Email or Password wrong");
+            notifyError("המייל או הסיסמה שגויים");
           }
         }}
       >
@@ -61,18 +61,18 @@ function SignIn() {
           >
             <div className="mb-6 text-center">
               <h3 className="text-3xl font-bold text-green-600">
-                Welcome Back!
+                ברוך שובך!
               </h3>
             </div>
 
             <div className="space-y-6">
-              {/* Email */}
+              {/* אימייל */}
               <div>
                 <label
                   htmlFor="userEmail"
                   className="block text-gray-700 font-medium"
                 >
-                  Email Address
+                  כתובת אימייל
                 </label>
                 <input
                   className="mt-1 text-gray-800 bg-white border border-gray-300 w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300"
@@ -91,13 +91,13 @@ function SignIn() {
                 )}
               </div>
 
-              {/* Password */}
+              {/* סיסמה */}
               <div>
                 <label
                   htmlFor="userPassword"
                   className="block text-gray-700 font-medium"
                 >
-                  Password
+                  סיסמה
                 </label>
                 <input
                   className="mt-1 text-gray-800 bg-white border border-gray-300 w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300"
@@ -116,7 +116,7 @@ function SignIn() {
                 )}
               </div>
 
-              {/* Submit Button */}
+              {/* כפתור התחברות */}
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -126,30 +126,30 @@ function SignIn() {
                     : "bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300"
                 }`}
               >
-                {isSubmitting ? "Processing..." : "Sign In"}
+                {isSubmitting ? "מעבד..." : "התחבר"}
               </button>
 
-              {/* Links */}
-              <div className="text-left text-gray-600 text-sm mt-4">
+              {/* קישורים */}
+              <div className="text-center text-gray-600 text-sm mt-4">
                 <p>
-                  Don't have an account yet?{" "}
+                  עדיין אין לך חשבון?{" "}
                   <Link
                     to={"/auth/sign-up"}
                     className="text-green-500 font-semibold hover:text-green-600"
                   >
-                    Sign Up here
+                    הירשם כאן
                   </Link>
                 </p>
               </div>
 
               <div className="text-center text-gray-600 text-sm mt-2">
                 <p>
-                  Forgot your password?{" "}
+                  שכחת את הסיסמה?{" "}
                   <Link
                     to={"/auth/forgot-password"}
                     className="text-green-500 font-semibold hover:text-green-600"
                   >
-                    Reset it here
+                    אפס אותה כאן
                   </Link>
                 </p>
               </div>

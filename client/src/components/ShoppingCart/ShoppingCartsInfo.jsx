@@ -9,7 +9,7 @@ import { io } from "socket.io-client";
 
 export function ShoppingCartsInfo() {
   console.log("Render---->>>");
-  
+
   const { user } = useContext(AuthContext);
   const { householdInfo } = useContext(HouseholdContext);
   const navigate = useNavigate();
@@ -17,16 +17,14 @@ export function ShoppingCartsInfo() {
   const [cartName, setCartName] = useState("");
   const [shoppingCart, setShoppingCart] = useState(null);
   const [isInputVisible, setIsInputVisible] = useState(false);
-  
-  // Use ref to store socket to prevent recreation
+
   const socketRef = useRef(null);
 
-  // Initialize socket only once
   useEffect(() => {
     if (!socketRef.current) {
       socketRef.current = io("http://localhost:3000", { autoConnect: false });
     }
-    
+
     return () => {
       if (socketRef.current) {
         socketRef.current.disconnect();
@@ -42,20 +40,17 @@ export function ShoppingCartsInfo() {
       return data.data || [];
     },
     enabled: !!householdInfo?._id,
-    staleTime: 30000, // 30 seconds
+    staleTime: 30000,
     refetchOnWindowFocus: false,
   });
 
-  // Memoize cart notification handler to prevent recreation
   const handleCartNotification = useCallback((data) => {
-    // Don't refetch if this user created the cart
     if (data.createdBy !== user?._id) {
       notifySuccess(data.message);
       refetch();
     }
   }, [refetch, user?._id]);
 
-  // Handle Socket Connection - only when householdInfo._id changes
   useEffect(() => {
     const socket = socketRef.current;
     if (!socket || !householdInfo?._id) return;
@@ -65,7 +60,6 @@ export function ShoppingCartsInfo() {
       socket.emit("joinHousehold", householdInfo._id);
     }
 
-    // Listen to cart events
     socket.on("cartNotification", handleCartNotification);
 
     return () => {
@@ -75,36 +69,32 @@ export function ShoppingCartsInfo() {
 
   const addCart = async () => {
     if (!cartName.trim()) return;
-    
+
     try {
       const newCart = {
         cartName: cartName.trim(),
         cartOwner: user?._id,
-        householdId: householdInfo._id
+        householdId: householdInfo._id,
       };
-      
+
       const { data } = await axios.post(`/shoppingCart/`, newCart);
-      notifySuccess("Created new cart");
-      
-      // Reset form
+      notifySuccess("עגלת קניות נוצרה בהצלחה");
+
       setCartName("");
       setIsInputVisible(false);
-      
-      // Refetch data
       refetch();
 
-      // Emit socket event
       if (socketRef.current?.connected) {
         socketRef.current.emit("cartCreated", {
           householdId: householdInfo._id,
           cartId: data.data._id,
           cartName: cartName.trim(),
-          createdBy: user?._id
+          createdBy: user?._id,
         });
       }
     } catch (error) {
       console.error("Error creating cart:", error);
-      notifyError("Failed to create cart");
+      notifyError("יצירת העגלה נכשלה");
     }
   };
 
@@ -114,11 +104,10 @@ export function ShoppingCartsInfo() {
     }
   };
 
-  // Handle click outside - memoized to prevent recreation
   const handleClickOutside = useCallback((event) => {
-    if (shoppingCart && 
-        !event.target.closest('.cart-view-area') &&
-        !event.target.closest('.cart-card')) {
+    if (shoppingCart &&
+      !event.target.closest('.cart-view-area') &&
+      !event.target.closest('.cart-card')) {
       setShoppingCart(null);
     }
   }, [shoppingCart]);
@@ -140,7 +129,7 @@ export function ShoppingCartsInfo() {
             <div className="flex flex-wrap gap-10 items-center w-full max-w-md animate-fadeIn">
               <input
                 type="text"
-                placeholder="Enter cart name..."
+                placeholder="הכנס שם לעגלה..."
                 value={cartName}
                 onChange={(e) => setCartName(e.target.value)}
                 onKeyPress={handleKeyPress}
@@ -152,12 +141,12 @@ export function ShoppingCartsInfo() {
                 <button
                   onClick={addCart}
                   className={`${cartName.trim()
-                      ? "bg-green-500 text-white hover:bg-green-600"
-                      : "bg-green-300 text-gray-100 cursor-not-allowed"
+                    ? "bg-green-500 text-white hover:bg-green-600"
+                    : "bg-green-300 text-gray-100 cursor-not-allowed"
                     } px-4 py-3 rounded-lg transition flex items-center justify-center`}
                   disabled={!cartName.trim()}
                 >
-                  <span className="font-medium">Add</span>
+                  <span className="font-medium">הוסף</span>
                 </button>
                 <button
                   onClick={() => {
@@ -166,7 +155,7 @@ export function ShoppingCartsInfo() {
                   }}
                   className="ml-2 bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-3 rounded-lg transition"
                 >
-                  Cancel
+                  ביטול
                 </button>
               </div>
             </div>
@@ -178,12 +167,12 @@ export function ShoppingCartsInfo() {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
               </svg>
-              <span className="font-medium">New Shopping Cart</span>
+              <span className="font-medium">עגלת קניות חדשה</span>
             </button>
           )}
         </div>
         <div className="text-gray-600 text-sm">
-          {shoppingCarts.length} {shoppingCarts.length === 1 ? 'cart' : 'carts'} available
+          {shoppingCarts.length} {shoppingCarts.length === 1 ? 'עגלה זמינה' : 'עגלות זמינות'}
         </div>
       </div>
 
@@ -195,18 +184,18 @@ export function ShoppingCartsInfo() {
                 key={cart._id}
                 onClick={() => navigate(`/household/shopping-cart/${cart._id}`)}
                 className={`cart-card cursor-pointer bg-white border rounded-xl p-4 transition duration-200 shadow-sm hover:shadow-md ${shoppingCart?._id === cart._id
-                    ? "border-green-500 ring-2 ring-green-200"
-                    : "border-gray-200 hover:border-green-300"
+                  ? "border-green-500 ring-2 ring-green-200"
+                  : "border-gray-200 hover:border-green-300"
                   }`}
               >
                 <div className="flex justify-between items-center">
                   <h2 className="text-xl font-semibold text-gray-800">{cart.cartName}</h2>
                   <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                    New
+                    חדשה
                   </span>
                 </div>
                 <div className="mt-2 text-gray-500 text-sm">
-                  Created by {cart.cartOwner === user?._id ? 'you' : 'household member'}
+                  נוצרה על ידי {cart.cartOwner === user?._id ? 'אתה' : 'חבר משק'}
                 </div>
               </div>
             ))
@@ -217,8 +206,8 @@ export function ShoppingCartsInfo() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                 </svg>
               </div>
-              <h3 className="text-lg font-medium text-gray-600">No shopping carts yet</h3>
-              <p className="text-gray-500 mt-1 mb-4">Create your first shopping cart to get started</p>
+              <h3 className="text-lg font-medium text-gray-600">אין עדיין עגלות קניות</h3>
+              <p className="text-gray-500 mt-1 mb-4">צור עגלה חדשה כדי להתחיל</p>
               <button
                 onClick={() => setIsInputVisible(true)}
                 className="inline-flex items-center px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition"
@@ -226,7 +215,7 @@ export function ShoppingCartsInfo() {
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                 </svg>
-                Create Cart
+                צור עגלה
               </button>
             </div>
           )}

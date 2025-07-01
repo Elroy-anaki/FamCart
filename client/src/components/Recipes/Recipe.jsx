@@ -19,18 +19,18 @@ const Recipe = ({ recipe }) => {
       await axios.delete(`/recipes/${recipe._id}`);
     },
     onSuccess: () => {
-      notifySuccess("Recipe deleted successfully!");
+      notifySuccess("המתכון נמחק בהצלחה!");
       queryClient.invalidateQueries({ queryKey: ['householdRecipes'] });
       queryClient.invalidateQueries({ queryKey: ['myRecipes'] });
     },
     onError: (error) => {
       console.error("Error deleting recipe:", error);
-      notifyError("Failed to delete recipe. Please try again.");
+      notifyError("מחיקת המתכון נכשלה. נסה שוב.");
     },
   });
 
   if (!recipe) {
-    return <p>No recipe data available.</p>;
+    return <p>אין נתוני מתכון להצגה.</p>;
   }
 
   const { _id, recipeName, image, createdBy, linkedHousehold } = recipe;
@@ -52,7 +52,7 @@ const Recipe = ({ recipe }) => {
             className="w-full h-full object-cover"
           />
         ) : (
-          <p className="text-gray-500 text-sm">No Image Available</p>
+          <p className="text-gray-500 text-sm">אין תמונה זמינה</p>
         )}
       </div>
   
@@ -62,20 +62,20 @@ const Recipe = ({ recipe }) => {
       {/* Created By */}
       {createdBy && (
         <div className="text-sm text-gray-500 mb-2">
-          <p>Created by: {createdBy.userName || 'Unknown'}</p>
+          <p>נוצר על ידי: {createdBy.userName || 'לא ידוע'}</p>
         </div>
       )}
   
       {/* Recipe Type */}
       <p className="w-3/4 text-center text-white px-3 py-1 rounded-lg bg-purple-700 text-sm mb-2">
-        Recipe Type: {linkedHousehold ? 'Public' : 'Private'}
+        סוג מתכון: {linkedHousehold ? 'ציבורי' : 'פרטי'}
       </p>
       
       <button 
         onClick={() => deleteRecipe()} 
         className="w-3/4 cursor-pointer text-white px-3 py-1 rounded-lg bg-rose-700 text-sm hover:bg-rose-800 transition-colors"
       >
-        Delete
+        מחק
       </button>
     </div>
   );

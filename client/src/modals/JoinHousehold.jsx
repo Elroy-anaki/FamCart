@@ -30,7 +30,7 @@ export default function JoinHousehold({ isOpen, setIsOpen, code, setCode, onJoin
           >
             <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
               <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
-                Enter household join code
+                הכנס קוד כדי להצטרף למשק בית קיים
               </Dialog.Title>
               <div className="mt-2">
                 <input
@@ -48,14 +48,14 @@ export default function JoinHousehold({ isOpen, setIsOpen, code, setCode, onJoin
                   className="inline-flex justify-center rounded-md border border-transparent bg-gray-200 px-4 py-2 text-sm font-medium text-black hover:bg-gray-300"
                   onClick={() => setIsOpen(false)}
                 >
-                  Cancel
+                  ביטול
                 </button>
                 <button
                   type="button"
                   className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
                   onClick={onJoin}
                 >
-                  Join
+                  הצטרף
                 </button>
               </div>
             </Dialog.Panel>

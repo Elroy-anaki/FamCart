@@ -16,7 +16,7 @@ export function sendEmailVerification (user) {
 
 export function sendEmailForGotPassword (user) {
   transporter.sendMail({
-    from: String(process.env.EMAIL_SENDER) || "",
+    from: "FamCart",
     to: user.userEmail,
     subject: "Reset Password",
     html: `
