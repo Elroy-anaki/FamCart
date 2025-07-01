@@ -113,20 +113,7 @@ function SingUp() {
                 {isSubmitting ? "יוצר חשבון..." : "הצטרף עכשיו"}
               </button>
               
-              <div className="w-full flex justify-center py-2 md:py-3">
-                <GoogleLogin
-                  onSuccess={(credentialResponse) => {
-                    signUpWithGoogle(jwtDecode(credentialResponse.credential));
-                    navigate("/auth/sign-in");
-                  }}
-                  onError={() => console.log("הכניסה נכשלה")}
-                  auto_select={true}
-                  size="large"
-                  shape="circle"
-                  logo_alignment="left"
-                  login_uri=""
-                />
-              </div>
+              
 
               <p className="text-center text-gray-600 text-xs md:text-sm mt-2">
                 כבר יש לך חשבון?{" "}

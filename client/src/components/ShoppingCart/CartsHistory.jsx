@@ -48,7 +48,7 @@ export default function CartsHistory() {
     <div className="p-6">
       <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">היסטוריית עגלות הקניות</h1>
       <h2 className="text-lg font-medium text-gray-600 mb-6 text-center">
-        סכום כולל: <span className="text-green-600 font-semibold">${data.totalPrice.toFixed(2)}</span>
+        סכום כולל: <span className="text-green-600 font-semibold">₪{data.totalPrice.toFixed(2)}</span>
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {data.cartsHistory.length > 0 ? (
@@ -74,7 +74,7 @@ export default function CartsHistory() {
                   פתח מחדש
                 </button>
                 <button
-                  onClick={() => navigate(`/household/shopping-cart/${cart._id}`)}
+                  onClick={() => navigate(`/household/shopping-cart/₪{cart._id}`)}
                   className="cursor-pointer text-gray-500 hover:text-gray-700 text-sm font-medium transition"
                 >
                   לצפייה בפרטים

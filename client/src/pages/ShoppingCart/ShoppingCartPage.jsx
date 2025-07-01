@@ -286,7 +286,7 @@ export default function ShoppingCartPage() {
               />
               <button
                 onClick={() => startListening("new")}
-                className={`absolute right-2 p-1 rounded-full cursor-pointer transition-colors ${
+                className={`absolute right-89 p-1 rounded-full cursor-pointer transition-colors ${
                   isListening && activeInputIndex === "new"
                     ? "bg-red-500 text-white animate-pulse"
                     : "bg-gray-200 hover:bg-gray-300 text-gray-700"
