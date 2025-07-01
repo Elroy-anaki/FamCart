@@ -84,24 +84,16 @@ export default function HouseholdInfoPage() {
           params: { month, year },
         }
       );
-      console.log("data", data);
       return data.data; // Expected: { totalPrice, carts: [...] }
     },
     enabled: !!householdInfo?._id,
-    // Re-fetch when household info changes (including budget)
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
   }); 
+  
   const totalPrice = totalData || 0;
   const budget = householdInfo?.householdBudget || 0;
   const isOverBudget = totalPrice > budget;
-
-  console.log("Total Price:", totalPrice);
-  console.log("Budget:", budget);
-  console.log("Is Over Budget:", isOverBudget);
-  console.log("Is Loading Expenses:", isLoadingExpenses);
-  console.log("Total Data:", totalData);
-  console.log("Household Info:", householdInfo);
 
   return (
     <div className="p-4 md:p-6 max-w-4xl mx-auto space-y-4">
@@ -113,8 +105,9 @@ export default function HouseholdInfoPage() {
       </div>
 
       <ShoppingCartsInfo />
-{/* Expenses Status */}
-{isLoadingExpenses ? (
+
+      {/* Expenses Status */}
+      {isLoadingExpenses ? (
         <div className="rounded-xl p-4 bg-gray-300 text-gray-600 font-semibold text-lg text-center">
           Loading expenses...
         </div>
@@ -128,6 +121,7 @@ export default function HouseholdInfoPage() {
           {isOverBudget ? "Over Budget" : "Within Budget"}
         </div>
       )}
+
       {/* Budget and Join Code Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         {/* Budget Box */}
@@ -177,8 +171,6 @@ export default function HouseholdInfoPage() {
           </button>
         </div>
       </div>
-
-      
 
       {/* Shopping Days */}
       <div className="w-full">

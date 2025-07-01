@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useState, useEffect, useContext } from "react";
 import { notifySuccess, notifyError } from "../../lib/Toasts";
@@ -12,6 +12,7 @@ import {unitOptions} from "../../constants/index"
 const socket = io("http://localhost:3000", { autoConnect: false });
 
 export default function ShoppingCartPage() {
+  const queryClient = useQueryClient()
   const { cartId } = useParams();
   const navigate = useNavigate();
   const { householdInfo } = useContext(HouseholdContext);
@@ -90,6 +91,7 @@ export default function ShoppingCartPage() {
   });
 
   const deleteCart = useMutation({
+    mutationKey:["deleteCart"],
     mutationFn: async () => {
       await axios.delete(`/shoppingCart/${householdInfo._id}/${cartId}`);
     },
@@ -99,7 +101,9 @@ export default function ShoppingCartPage() {
         householdId: householdInfo._id,
         cartId,
       });
+      queryClient.invalidateQueries({queryKey: ["getAllShoppingCartsByHouseholdId"]})
       navigate("/household/carts-active");
+      
     },
     onError: () => notifyError("Failed to delete cart"),
   });
@@ -115,10 +119,6 @@ export default function ShoppingCartPage() {
     },
     onError: () => notifyError("Completed cart failed"),
   });
-
-  const resetItems = () => {
-    setItems(data.cartItems);
-  };
 
   const handleAddItem = () => {
     if (!newItem.name.trim()) return;

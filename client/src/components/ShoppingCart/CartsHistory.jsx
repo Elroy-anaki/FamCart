@@ -30,7 +30,7 @@ export default function CartsHistory() {
     },
     onSuccess: () => {
         notifySuccess("Reopen cart!")
-        queryClient.invalidateQueries({queryKey:["getCartsHistory"]})
+        queryClient.invalidateQueries({queryKey:["getCartsHistory", "getHouseholdInfo"]})
     },
     onError: () => notifyError("Reopen cart failed")
   })

@@ -24,9 +24,9 @@ export const joinHousehold = async (req, res, next) => {
 
 export const getHouseholdInfo = async (req, res, next) => {
     try {
-        console.log("userId", req.params.userId)
+        console.log("userId------>", req.params.userId)
         const household = await getHouseholdInfoByUserId(req.params.userId)
-        res.status(201).json({ok: true, data: household})
+        res.status(200).json({ok: true, data: household})
     } catch (error) {
         next(error)
     }

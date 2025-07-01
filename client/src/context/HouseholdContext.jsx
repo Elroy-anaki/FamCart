@@ -1,10 +1,9 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { AuthContext } from "./AuthContext";
 
-// תיקון שם הקונטקסט (הוספת האות 't')
-export const HouseholdContext = createContext(null); // הוספת ערך ברירת מחדל null
+export const HouseholdContext = createContext(null);
 
 // יצירת הוק נוח לשימוש בקונטקסט
 export const useHousehold = () => {
@@ -17,41 +16,36 @@ export const useHousehold = () => {
 
 function HouseholdProvider({ children }) {
   const auth = useContext(AuthContext);
-  // בדיקה האם AuthContext קיים ואם יש לו מאפיין user
   const user = auth?.user;
-  const [householdInfo, setHouseholdInfo] = useState(null);
   
-  const { refetch: getHouseholdInfo } = useQuery({
-    queryKey: ["getHouseholdInfo"],
+  const { data: householdInfo, refetch: getHouseholdInfo, isLoading, error } = useQuery({
+    queryKey: ["getHouseholdInfo", user?._id], // הוספת user._id ל-queryKey
     queryFn: async () => {
-      if (!user) {
-        console.log("No user");
+      if (!user?._id) {
         return null;
       }
 
       try {
         const { data } = await axios.get(`/households/${user._id}`);
-        console.log(data);
-        setHouseholdInfo(data.data);
         return data.data;
       } catch (error) {
-        console.log(error);
-        return null;
+        console.error("Error fetching household info:", error);
+        throw error; // זרוק את השגיאה כדי ש-React Query יטפל בה
       }
     },
-    enabled: !!user, 
+    enabled: !!user?._id, // רק אם יש user עם _id
+    staleTime: 5 * 60 * 1000, // 5 דקות
+    refetchOnWindowFocus: false,
+    retry: 1, // נסה שוב פעם אחת בלבד במקרה של שגיאה
   });
 
-  useEffect(() => {
-    if (user) {
-      getHouseholdInfo();
-    }
-  }, [user]);
-
-  const state = {
-    householdInfo,
+  // השתמש ב-useMemo כדי למנוע יצירה מחדש של האובייקט state
+  const state = useMemo(() => ({
+    householdInfo: householdInfo || null,
     getHouseholdInfo,
-  };
+    isLoading,
+    error
+  }), [householdInfo, getHouseholdInfo, isLoading, error]);
 
   return (
     <HouseholdContext.Provider value={state}>

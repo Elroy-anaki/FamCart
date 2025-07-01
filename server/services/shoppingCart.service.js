@@ -89,8 +89,10 @@ export const getCartsHistoryByHouseholdId = async (householdId) => {
     }
   };
   
-  export const reopenCart = async (cartId) => {
+  export const reopenCart = async (cartId, householdId) => {
     try {
+      console.log(householdId);
+      
         // Find the old cart
         const oldCart = await ShoppingCart.findById(cartId);
         if (!oldCart) throw new Error("Cart not found");
@@ -109,6 +111,11 @@ export const getCartsHistoryByHouseholdId = async (householdId) => {
             cartOwner: oldCart.cartOwner,
             householdId: oldCart.householdId,
         });
+        const household = await Household.findById(householdId)
+        console.log("household", household, newCart._id);
+        
+        household.householdShoppingCarts.push(newCart._id)
+        await household.save()
 
         return newCart;
     } catch (error) {
@@ -145,6 +152,7 @@ export const recipeToCart = async (cartId,recipeId, data) => {
                  householdId: data.user.payload.householdId, // Set householdId if needed
              });
              household.householdShoppingCarts.push(newCart._id)
+             console.log("household", household)
              await household.save()
              return newCart;
          }

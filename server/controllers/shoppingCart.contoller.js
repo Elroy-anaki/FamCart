@@ -73,8 +73,10 @@ export const getCartsHistory = async(req, res, next) => {
 export const reopen = async(req, res, next) => {
     try {
         console.log(req.params.cartId);
-                
-        const cartsHistory = await reopenCart(req.params.cartId)
+        console.log("req.user", req.body.user.payload.householdId);
+        const householdId = req.body.user.payload.householdId
+        
+        const cartsHistory = await reopenCart(req.params.cartId, householdId)
         res.status(203).json({ok: true, data: cartsHistory})
     } catch (error) {
         next(error)
